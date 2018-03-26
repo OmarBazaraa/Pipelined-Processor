@@ -1,0 +1,14 @@
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY control_unit IS
+    PORT(
+        EXT_CLK, HARD_RST    : IN STD_LOGIC
+    );
+END ENTITY;
+
+ARCHITECTURE arch_control_unit OF control_unit IS
+
+BEGIN
+    
+END ARCHITECTURE;
