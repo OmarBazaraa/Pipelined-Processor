@@ -14,13 +14,14 @@ ENTITY control_unit IS
         Immediate_Val       : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
         Flags               : IN  STD_LOGIC_VECTOR( 3 DOWNTO 0);
 
-        EXE_MEM_Src         : IN  STD_LOGIC_VECTOR(20 DOWNTO 0);
-        EXE_MEM_Dst         : IN  STD_LOGIC_VECTOR(20 DOWNTO 0);
-        EXE_MEM_Ctrl        : IN  STD_LOGIC_VECTOR(20 DOWNTO 0);
+        DEC_EXE_Ctrl        : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
 
-        MEM_WB_Src          : IN  STD_LOGIC_VECTOR(20 DOWNTO 0);
-        MEM_WB_Dst          : IN  STD_LOGIC_VECTOR(20 DOWNTO 0);
-        MEM_WB_Ctrl         : IN  STD_LOGIC_VECTOR(20 DOWNTO 0);
+        EXE_MEM_Src         : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
+        EXE_MEM_Dst         : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
+        EXE_MEM_Ctrl        : IN  STD_LOGIC_VECTOR(13 DOWNTO 0);
+
+        MEM_WB_Src          : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
+        MEM_WB_Dst          : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
 
         IR_EN               : OUT STD_LOGIC;
         PC_EN               : OUT STD_LOGIC;
@@ -29,9 +30,9 @@ ENTITY control_unit IS
 
         PC_Nxt              : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 
-        Src_Dout            : OUT STD_LOGIC_VECTOR(20 DOWNTO 0);
-        Dst_Dout            : OUT STD_LOGIC_VECTOR(20 DOWNTO 0);
-        Ctrl_Dout           : OUT STD_LOGIC_VECTOR(20 DOWNTO 0)
+        Src_Dout            : OUT STD_LOGIC_VECTOR(19 DOWNTO 0);
+        Dst_Dout            : OUT STD_LOGIC_VECTOR(19 DOWNTO 0);
+        Ctrl_Dout           : OUT STD_LOGIC_VECTOR(19 DOWNTO 0)
     );
 END ENTITY;
 

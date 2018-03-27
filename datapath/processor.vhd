@@ -77,7 +77,7 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL MEM_Dst              : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL MEM_Ctrl             : STD_LOGIC_VECTOR(13 DOWNTO 0);
 
-    SIGNAL MEM_Addr             : STD_LOGIC_VECTOR(10 DOWNTO 0);
+    SIGNAL MEM_Addr             : STD_LOGIC_VECTOR( 9 DOWNTO 0);
     SIGNAL MEM_Addr_Switch      : STD_LOGIC;
     SIGNAL MEM_WR               : STD_LOGIC;
     SIGNAL MEM_RD               : STD_LOGIC;
@@ -101,11 +101,11 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL WB_Dst               : STD_LOGIC_VECTOR(19 DOWNTO 0);
 
     SIGNAL WB_Src_Val           : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL WB_Rsrc              : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL WB_Rsrc              : STD_LOGIC_VECTOR( 2 DOWNTO 0);
     SIGNAL WB_Rsrc_WB           : STD_LOGIC;
 
     SIGNAL WB_Dst_Val           : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL WB_Rdst              : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL WB_Rdst              : STD_LOGIC_VECTOR( 2 DOWNTO 0);
     SIGNAL WB_Rdst_WB           : STD_LOGIC;
 
 BEGIN
@@ -118,11 +118,12 @@ BEGIN
     -- Program Memory
     PROG_MEM:
     ENTITY work.RAM
-    GENERIC(n => 16, m => 10);
+    GENERIC MAP(n => 16, m => 10)
     PORT MAP(
         CLK             => EXT_CLK,
         WR              => '0',
         Address         => PC_Cur(9 DOWNTO 0),
+        Din             => (OTHERS => '0'),
         Dout            => DEC_IR_Din
     );
 
@@ -180,13 +181,14 @@ BEGIN
         Immediate_Val   => DEC_IR_Din,
         Flags           => Flags_Dout,
 
+        DEC_EXE_Ctrl    => EXE_Ctrl,
+
         EXE_MEM_Src     => MEM_Src,
         EXE_MEM_Dst     => MEM_Dst,
         EXE_MEM_Ctrl    => MEM_Ctrl,
 
         MEM_WB_Src      => WB_Src,
         MEM_WB_Dst      => WB_Dst,
-        MEM_WB_Ctrl     => WB_Ctrl,
 
         IR_EN           => DEC_IR_EN,
         PC_EN           => PC_EN,
@@ -205,17 +207,17 @@ BEGIN
     -- Execute Stage
     --
 
-    EXE_SRC:
+    EXE_SRC_REG:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 20)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', EXE_Src_Din, EXE_Src);
 
-    EXE_DST:
+    EXE_DST_REG:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 20)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', EXE_Dst_Din, EXE_Dst);
 
-    EXE_CTRL:
+    EXE_CTRL_REG:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 20)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', EXE_Ctrl_Din, EXE_Ctrl);
@@ -228,7 +230,7 @@ BEGIN
     EXE_ALU:
     ENTITY work.ALU
     GENERIC MAP(n => 16)
-    PORT(
+    PORT MAP(
         Opr     => EXE_Opr,
         A       => EXE_Src(15 DOWNTO 0),
         B       => EXE_Dst(15 DOWNTO 0),
@@ -260,17 +262,17 @@ BEGIN
     -- Memory Stage
     --
 
-    MEM_SRC:
+    MEM_SRC_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', MEM_Src_Din, MEM_Src);
 
-    MEM_DST:
+    MEM_DST_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', MEM_Dst_Din, MEM_Dst);
 
-    MEM_CTRL:
+    MEM_CTRL_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 14)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', MEM_Ctrl_Din, MEM_Ctrl);
@@ -285,11 +287,11 @@ BEGIN
 
     MEM_Din             <= MEM_Src(15 DOWNTO 0);
     MEM_PC              <= MEM_Dout(9 DOWNTO 0);
-    MEM_Flags           <= MEM_Dout(31 DOWNTO 10);
+    MEM_Flags           <= MEM_Dout(13 DOWNTO 10);
 
     DATA_MEM:
     ENTITY work.RAM
-    GENERIC(n => 16, m => 10);
+    GENERIC MAP(n => 16, m => 10)
     PORT MAP(
         CLK         => EXT_CLK,
         WR          => MEM_WR,
@@ -309,12 +311,12 @@ BEGIN
     -- Write Back Stage
     --
 
-    WB_SRC:
+    WB_SRC_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', WB_Src_Din, WB_Src);
 
-    WB_DST:
+    WB_DST_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', WB_Dst_Din, WB_Dst);

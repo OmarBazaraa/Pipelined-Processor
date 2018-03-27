@@ -39,16 +39,16 @@ ARCHITECTURE arch_register_file OF register_file IS
     --
     -- Registers
     --
-    SIGNAL Reg_Din                  : memory;
-    SIGNAL Reg_Dout                 : memory;
+    SIGNAL Reg_Din      : memory;
+    SIGNAL Reg_Dout     : memory;
 
-    SIGNAL Reg_EN                   : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL Reg_EN       : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    SIGNAL Reg_A_in                 : STD_LOGIC_VECTOR(7 DOWNTO 0);
-    SIGNAL Reg_B_in                 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL Reg_A_in     : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL Reg_B_in     : STD_LOGIC_VECTOR(7 DOWNTO 0);
 
-    SIGNAL Reg_A_out                : STD_LOGIC_VECTOR(7 DOWNTO 0);
-    SIGNAL Reg_B_out                : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL Reg_A_out    : STD_LOGIC_VECTOR(7 DOWNTO 0);
+    SIGNAL Reg_B_out    : STD_LOGIC_VECTOR(7 DOWNTO 0);
 BEGIN
 
     --===================================================================================
