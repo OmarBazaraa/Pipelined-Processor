@@ -22,6 +22,9 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL PC_EN        : STD_LOGIC;
     SIGNAL IR_EN        : STD_LOGIC;
 
+    SIGNAL Rsrc_Dout    : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL Rdst_Dout    : STD_LOGIC_VECTOR(15 DOWNTO 0);
+
     SIGNAL Flags_EN     : STD_LOGIC;
     SIGNAL Flags_Din    : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL Flags_Dout   : STD_LOGIC_VECTOR( 3 DOWNTO 0);
@@ -145,13 +148,46 @@ BEGIN
         PC_Dout         => PC_Cur,
 
         Reg_A_RD_Addr   => ,
-        Reg_A_Dout      => ,
+        Reg_A_Dout      => Rdst_Dout,
 
         Reg_B_RD_Addr   => ,
-        Reg_B_Dout      => 
+        Reg_B_Dout      => Rsrc_Dout
     );
 
-    
+    CTRL_UNIT:
+    ENTITY work.control_unit
+    PORT MAP(
+        RESET           => RESET,
+        INTR            => INTR,
+
+        Instr           => IR_Dout,
+
+        PC              => PC_Cur,
+        Rsrc_Val        => Rsrc_Dout,
+        Rdst_Val        => Rdst_Dout,
+        Immediate_Val   => IR_Din,
+        Flags           => Flags_Dout,
+
+        EXE_MEM_Src     => MEM_Src,
+        EXE_MEM_Dst     => MEM_Dst,
+        EXE_MEM_Ctrl    => MEM_Ctrl,
+
+        MEM_WB_Src      => WB_Src,
+        MEM_WB_Dst      => WB_Dst,
+        MEM_WB_Ctrl     => WB_Ctrl,
+
+        IR_EN           => IR_EN,
+        PC_EN           => PC_EN,
+        
+        Flush_EX        => 
+        Flush_IR        =>
+
+        PC_Nxt          =>
+
+        Src_Dout        => EXE_Src_Din,
+        Dst_Dout        => EXE_Dst_Din,
+        Ctrl_Dout       => EXE_Ctrl_Din
+    );
 
     --===================================================================================
     --
@@ -286,7 +322,6 @@ BEGIN
     WB_Rdst     <= WB_Dst(18 DOWNTO 16);
     WB_Rdst_WB  <= WB_Dst(19);
 
-    
 END ARCHITECTURE;
 
 
