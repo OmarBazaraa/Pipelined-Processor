@@ -25,7 +25,6 @@ ENTITY control_unit IS
         IR_EN               : OUT STD_LOGIC;
         PC_EN               : OUT STD_LOGIC;
         
-        Flush_EX            : OUT STD_LOGIC;
         Flush_IR            : OUT STD_LOGIC;
 
         PC_Nxt              : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);

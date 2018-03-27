@@ -15,19 +15,31 @@ ARCHITECTURE arch_processor OF processor IS
 
     SIGNAL PC_Cur       : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL PC_Nxt       : STD_LOGIC_VECTOR(15 DOWNTO 0);
-
-    SIGNAL IR_Dout      : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL IR_Din       : STD_LOGIC_VECTOR(15 DOWNTO 0);
-
     SIGNAL PC_EN        : STD_LOGIC;
-    SIGNAL IR_EN        : STD_LOGIC;
-
-    SIGNAL Rsrc_Dout    : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL Rdst_Dout    : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     SIGNAL Flags_EN     : STD_LOGIC;
     SIGNAL Flags_Din    : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL Flags_Dout   : STD_LOGIC_VECTOR( 3 DOWNTO 0);
+
+    -------------------------------------------------------
+    --
+    -- Decode Stage
+    --
+
+    -- From fetch stage
+    SIGNAL DEC_IR_Din           : STD_LOGIC_VECTOR(15 DOWNTO 0);
+
+    -- To decode stage
+    SIGNAL DEC_IR_Dout          : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    
+    SIGNAL DEC_IR_EN            : STD_LOGIC;
+    SIGNAL DEC_IR_RST           : STD_LOGIC;
+    SIGNAL DEC_Flush            : STD_LOGIC;
+
+    SIGNAL DEC_Rsrc             : STD_LOGIC_VECTOR( 2 DOWNTO 0);
+    SIGNAL DEC_Rsrc_Dout        : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL DEC_Rdst             : STD_LOGIC_VECTOR( 2 DOWNTO 0);
+    SIGNAL DEC_Rdst_Dout        : STD_LOGIC_VECTOR(15 DOWNTO 0);
 
     -------------------------------------------------------
     --
@@ -111,22 +123,22 @@ BEGIN
         CLK             => EXT_CLK,
         WR              => '0',
         Address         => PC_Cur(9 DOWNTO 0),
-        Dout            => IR_Din
+        Dout            => DEC_IR_Din
     );
-
-    -- IR
-    IR:
-    ENTITY work.register_edge_falling
-    GENERIC MAP(n => 16)
-    PORT MAP(EXT_CLK, HARD_RST, IR_EN, '0', IR_Din, IR_Dout);
-
-    -- Next PC calculation
-
 
     --===================================================================================
     --
     -- Decode Stage
     --
+
+    DEC_IR_RST  <= HARD_RST OR DEC_Flush;
+
+    DEC_IR:
+    ENTITY work.register_edge_falling
+    GENERIC MAP(n => 16)
+    PORT MAP(EXT_CLK, DEC_IR_RST, DEC_IR_EN, '0', DEC_IR_Din, DEC_IR_Dout);
+
+    -------------------------------------------------------
 
     REG_FILE:
     ENTITY work.register_file
@@ -147,11 +159,11 @@ BEGIN
 
         PC_Dout         => PC_Cur,
 
-        Reg_A_RD_Addr   => ,
-        Reg_A_Dout      => Rdst_Dout,
+        Reg_A_RD_Addr   => DEC_Rdst,
+        Reg_A_Dout      => DEC_Rdst_Dout,
 
-        Reg_B_RD_Addr   => ,
-        Reg_B_Dout      => Rsrc_Dout
+        Reg_B_RD_Addr   => DEC_Rsrc,
+        Reg_B_Dout      => DEC_Rsrc_Dout
     );
 
     CTRL_UNIT:
@@ -160,12 +172,12 @@ BEGIN
         RESET           => RESET,
         INTR            => INTR,
 
-        Instr           => IR_Dout,
+        Instr           => DEC_IR_Dout,
 
         PC              => PC_Cur,
-        Rsrc_Val        => Rsrc_Dout,
-        Rdst_Val        => Rdst_Dout,
-        Immediate_Val   => IR_Din,
+        Rsrc_Val        => DEC_Rsrc_Dout,
+        Rdst_Val        => DEC_Rdst_Dout,
+        Immediate_Val   => DEC_IR_Din,
         Flags           => Flags_Dout,
 
         EXE_MEM_Src     => MEM_Src,
@@ -176,13 +188,12 @@ BEGIN
         MEM_WB_Dst      => WB_Dst,
         MEM_WB_Ctrl     => WB_Ctrl,
 
-        IR_EN           => IR_EN,
+        IR_EN           => DEC_IR_EN,
         PC_EN           => PC_EN,
         
-        Flush_EX        => 
-        Flush_IR        =>
+        Flush_IR        => DEC_Flush,
 
-        PC_Nxt          =>
+        PC_Nxt          => PC_Nxt,
 
         Src_Dout        => EXE_Src_Din,
         Dst_Dout        => EXE_Dst_Din,
@@ -292,10 +303,6 @@ BEGIN
     WB_Src_Din(19 DOWNTO 16)    <= MEM_Src(19 DOWNTO 16);
 
     WB_Dst_Din                  <= MEM_Dst;
-
-    -- TODO:
-    -- Add unit to update PC & Restore Flags
-    -- Needed for RET, RTI
 
     --===================================================================================
     --
