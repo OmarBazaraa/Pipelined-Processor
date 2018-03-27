@@ -5,7 +5,7 @@ ENTITY register_edge_rising IS
     GENERIC(n: INTEGER := 16);
     PORT(
         CLK, RST, EN    : IN  STD_LOGIC;
-        RstVal          : IN  STD_LOGIC;
+        RST_VAL         : IN  STD_LOGIC;
         Din             : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
         Dout            : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
     );
@@ -17,7 +17,7 @@ BEGIN
     PROCESS(CLK, RST)
     BEGIN
         IF RST='1' THEN
-            Dout <= (OTHERS => RstVal);
+            Dout <= (OTHERS => RST_VAL);
         ELSIF EN='1' AND RISING_EDGE(CLK) THEN
             Dout <= Din;
         END IF;

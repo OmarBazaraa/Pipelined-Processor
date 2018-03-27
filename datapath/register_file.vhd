@@ -49,7 +49,7 @@ ARCHITECTURE arch_register_file OF register_file IS
 
     SIGNAL Reg_A_out                : STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL Reg_B_out                : STD_LOGIC_VECTOR(7 DOWNTO 0);
-Begin
+BEGIN
 
     --===================================================================================
     --
