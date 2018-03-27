@@ -42,8 +42,8 @@ ENTITY control_unit IS
         MemAddr             : OUT STD_LOGIC_VECTOR( 9 DOWNTO 0);
         MemAddrSP           : OUT STD_LOGIC;
         MemAddrSwitch       : OUT STD_LOGIC;
-        MemRD               : OUT STD_LOGIC;
         MemWR               : OUT STD_LOGIC;
+        MemRD               : OUT STD_LOGIC;
 
         PortIn              : OUT STD_LOGIC;
         PortOut             : OUT STD_LOGIC
