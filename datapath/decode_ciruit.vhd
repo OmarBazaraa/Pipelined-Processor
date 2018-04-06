@@ -17,7 +17,6 @@ ENTITY decode_ciruit IS
         Shift_Val               : OUT STD_LOGIC_VECTOR( 3 DOWNTO 0);
         
         Instr_MOV               : OUT STD_LOGIC;
-        Instr_MUL               : OUT STD_LOGIC;
         Instr_LDM               : OUT STD_LOGIC;
         Instr_SHIFT             : OUT STD_LOGIC;
 
@@ -25,8 +24,8 @@ ENTITY decode_ciruit IS
         Flags_EN                : OUT STD_LOGIC;
         Flags_Restore           : OUT STD_LOGIC;
         
-        Mem_EA                  : OUT STD_LOGIC_VECTOR( 9 DOWNTO 0);   
-        Mem_Addr_SP             : OUT STD_LOGIC;
+        Mem_EA                  : OUT STD_LOGIC_VECTOR( 9 DOWNTO 0);
+        Mem_EA_Load             : OUT STD_LOGIC;
         Mem_Addr_Switch         : OUT STD_LOGIC;
         Mem_RD                  : OUT STD_LOGIC;
         Mem_WR                  : OUT STD_LOGIC;
@@ -36,7 +35,7 @@ ENTITY decode_ciruit IS
         
         PC_Save                 : OUT STD_LOGIC;
         
-        BranchTaken             : OUT STD_LOGIC
+        Branch_Taken            : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -57,6 +56,8 @@ ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
     SIGNAL ALU_2_Opr            : STD_LOGIC;
     SIGNAL ALU_1_Opr            : STD_LOGIC;
     SIGNAL ALU_0_Opr            : STD_LOGIC;
+
+    SIGNAL Instr_MUL            : STD_LOGIC;
 
     SIGNAL MEM_Load             : STD_LOGIC;
     SIGNAL MEM_Store            : STD_LOGIC;
@@ -134,7 +135,8 @@ BEGIN
     MEM_Store       <= MEM_Type AND (NOT Instr(13));
 
     Mem_EA          <= Instr(12 DOWNTO 3);
-    Mem_Addr_Switch <= Stack_Push;
+    Mem_EA_Load     <= MEM_Type;
+    Mem_Addr_Switch <= Stack_Pop;
     Mem_RD          <= MEM_Load OR Stack_Pop;
     Mem_WR          <= MEM_Store OR Stack_Push;
 
@@ -145,7 +147,7 @@ BEGIN
 
     BranchSwitch    <= Instr(13 DOWNTO 12);
     Branch          <= JMP_Type AND Instr(11);
-    BranchTaken     <= Branch AND BranchCond;
+    Branch_Taken    <= Branch AND BranchCond;
 
     Stack           <= JMP_Type AND Instr(10);
     Stack_Push      <= Stack AND (NOT Instr(9));

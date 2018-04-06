@@ -98,20 +98,20 @@ ARCHITECTURE arch_processor OF processor IS
     --
 
     -- From memory stage
-    SIGNAL WB_Src_Din           : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL WB_Dst_Din           : STD_LOGIC_VECTOR(19 DOWNTO 0);
+    SIGNAL WRB_Src_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
+    SIGNAL WRB_Dst_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
     
     -- To write back stage
-    SIGNAL WB_Src               : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL WB_Dst               : STD_LOGIC_VECTOR(19 DOWNTO 0);
+    SIGNAL WRB_Src              : STD_LOGIC_VECTOR(19 DOWNTO 0);
+    SIGNAL WRB_Dst              : STD_LOGIC_VECTOR(19 DOWNTO 0);
 
-    SIGNAL WB_Src_Val           : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL WB_Rsrc              : STD_LOGIC_VECTOR( 2 DOWNTO 0);
-    SIGNAL WB_Rsrc_WB           : STD_LOGIC;
+    SIGNAL WRB_Src_Val          : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL WRB_Rsrc             : STD_LOGIC_VECTOR( 2 DOWNTO 0);
+    SIGNAL WRB_Rsrc_WB          : STD_LOGIC;
 
-    SIGNAL WB_Dst_Val           : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL WB_Rdst              : STD_LOGIC_VECTOR( 2 DOWNTO 0);
-    SIGNAL WB_Rdst_WB           : STD_LOGIC;
+    SIGNAL WRB_Dst_Val          : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL WRB_Rdst             : STD_LOGIC_VECTOR( 2 DOWNTO 0);
+    SIGNAL WRB_Rdst_WB          : STD_LOGIC;
 
 BEGIN
 
@@ -155,13 +155,13 @@ BEGIN
         PC_WR           => '1',
         PC_Din          => PC_Nxt,
 
-        Reg_A_WR        => WB_Rdst_WB,
-        Reg_A_WR_Addr   => WB_Rdst,
-        Reg_A_Din       => WB_Dst_Val,
+        Reg_A_WR        => WRB_Rdst_WB,
+        Reg_A_WR_Addr   => WRB_Rdst,
+        Reg_A_Din       => WRB_Dst_Val,
 
-        Reg_B_WR        => WB_Rsrc_WB,
-        Reg_B_WR_Addr   => WB_Rsrc,
-        Reg_B_Din       => WB_Src_Val,
+        Reg_B_WR        => WRB_Rsrc_WB,
+        Reg_B_WR_Addr   => WRB_Rsrc,
+        Reg_B_Din       => WRB_Src_Val,
 
         PC_Dout         => PC_Cur,
 
@@ -273,35 +273,35 @@ BEGIN
     );
 
 
-    WB_Src_Din(15 DOWNTO 0)     <= MEM_Src(15 DOWNTO 0) WHEN MEM_RD='0' ELSE MEM_Dout;
-    WB_Src_Din(19 DOWNTO 16)    <= MEM_Src(19 DOWNTO 16);
+    WRB_Src_Din(15 DOWNTO 0)     <= MEM_Src(15 DOWNTO 0) WHEN MEM_RD='0' ELSE MEM_Dout;
+    WRB_Src_Din(19 DOWNTO 16)    <= MEM_Src(19 DOWNTO 16);
 
-    WB_Dst_Din                  <= MEM_Dst;
+    WRB_Dst_Din                  <= MEM_Dst;
 
     --===================================================================================
     --
     -- Write Back Stage
     --
 
-    WB_SRC_REG:
+    WRB_SRC_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', WB_Src_Din, WB_Src);
+    PORT MAP(EXT_CLK, HARD_RST, '1', '0', WRB_Src_Din, WRB_Src);
 
-    WB_DST_REG:
+    WRB_DST_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', WB_Dst_Din, WB_Dst);
+    PORT MAP(EXT_CLK, HARD_RST, '1', '0', WRB_Dst_Din, WRB_Dst);
 
     -------------------------------------------------------
 
-    WB_Src_Val  <= WB_Src(15 DOWNTO 0);
-    WB_Rsrc     <= WB_Src(18 DOWNTO 16);
-    WB_Rsrc_WB  <= WB_Src(19);
+    WRB_Src_Val  <= WRB_Src(15 DOWNTO 0);
+    WRB_Rsrc     <= WRB_Src(18 DOWNTO 16);
+    WRB_Rsrc_WB  <= WRB_Src(19);
 
-    WB_Dst_Val  <= WB_Dst(15 DOWNTO 0);
-    WB_Rdst     <= WB_Dst(18 DOWNTO 16);
-    WB_Rdst_WB  <= WB_Dst(19);
+    WRB_Dst_Val  <= WRB_Dst(15 DOWNTO 0);
+    WRB_Rdst     <= WRB_Dst(18 DOWNTO 16);
+    WRB_Rdst_WB  <= WRB_Dst(19);
 
 END ARCHITECTURE;
 
