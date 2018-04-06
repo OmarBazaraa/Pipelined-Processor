@@ -13,13 +13,16 @@ END ENTITY;
 
 ARCHITECTURE arch_processor OF processor IS
 
-    SIGNAL PC_Cur       : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL PC_Nxt       : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL PC_EN        : STD_LOGIC;
+    SIGNAL PC_Cur               : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL PC_Nxt               : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL PC_EN                : STD_LOGIC;
+        
+    SIGNAL Flags_EN             : STD_LOGIC;
+    SIGNAL Flags_Din            : STD_LOGIC_VECTOR( 3 DOWNTO 0);
+    SIGNAL Flags_Dout           : STD_LOGIC_VECTOR( 3 DOWNTO 0);
 
-    SIGNAL Flags_EN     : STD_LOGIC;
-    SIGNAL Flags_Din    : STD_LOGIC_VECTOR( 3 DOWNTO 0);
-    SIGNAL Flags_Dout   : STD_LOGIC_VECTOR( 3 DOWNTO 0);
+    SIGNAL PC_Reset_Dout        : STD_LOGIC_VECTOR( 9 DOWNTO 0);
+    SIGNAL PC_INTR_Dout         : STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
     -------------------------------------------------------
     --
@@ -28,9 +31,11 @@ ARCHITECTURE arch_processor OF processor IS
 
     -- From fetch stage
     SIGNAL DEC_IR_Din           : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL DEC_PC_Din           : STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
     -- To decode stage
     SIGNAL DEC_IR_Dout          : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL DEC_PC_Dout          : STD_LOGIC_VECTOR( 9 DOWNTO 0);
     
     SIGNAL DEC_IR_EN            : STD_LOGIC;
     SIGNAL DEC_IR_RST           : STD_LOGIC;
@@ -167,40 +172,7 @@ BEGIN
         Reg_B_Dout      => DEC_Rsrc_Dout
     );
 
-    CTRL_UNIT:
-    ENTITY work.control_unit
-    PORT MAP(
-        RESET           => RESET,
-        INTR            => INTR,
-
-        Instr           => DEC_IR_Dout,
-
-        PC              => PC_Cur,
-        Rsrc_Val        => DEC_Rsrc_Dout,
-        Rdst_Val        => DEC_Rdst_Dout,
-        Immediate_Val   => DEC_IR_Din,
-        Flags           => Flags_Dout,
-
-        DEC_EXE_Ctrl    => EXE_Ctrl,
-
-        EXE_MEM_Src     => MEM_Src,
-        EXE_MEM_Dst     => MEM_Dst,
-        EXE_MEM_Ctrl    => MEM_Ctrl,
-
-        MEM_WB_Src      => WB_Src,
-        MEM_WB_Dst      => WB_Dst,
-
-        IR_EN           => DEC_IR_EN,
-        PC_EN           => PC_EN,
-        
-        Flush_IR        => DEC_Flush,
-
-        PC_Nxt          => PC_Nxt,
-
-        Src_Dout        => EXE_Src_Din,
-        Dst_Dout        => EXE_Dst_Din,
-        Ctrl_Dout       => EXE_Ctrl_Din
-    );
+    
 
     --===================================================================================
     --

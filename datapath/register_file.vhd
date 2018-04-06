@@ -80,20 +80,13 @@ BEGIN
 
     -- Registers R0 to R5
     L1:
-    FOR i IN 0 TO 5 GENERATE
+    FOR i IN 0 TO 6 GENERATE
         Reg_Din(i)  <= Reg_A_Din WHEN Reg_A_in(i)='1' ELSE Reg_B_Din;
         Ri:
         ENTITY work.register_edge_rising
         GENERIC MAP(n => 16)
         PORT MAP(CLK, RST, Reg_EN(i), '0', Reg_Din(i), Reg_Dout(i));
     END GENERATE;
-
-    -- Register SP
-    Reg_Din(6)  <= Reg_A_Din WHEN Reg_A_in(6)='1' ELSE Reg_B_Din;
-    SP:
-    ENTITY work.register_edge_rising
-    GENERIC MAP(n => 16)
-    PORT MAP(CLK, RST, Reg_EN(6), '1', Reg_Din(6), Reg_Dout(6));
 
     -- Register PC
     Reg_Din(7)  <= PC_Din;
