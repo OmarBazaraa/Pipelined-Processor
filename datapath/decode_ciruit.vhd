@@ -19,7 +19,7 @@ ENTITY decode_ciruit IS
         Shift_Load              : OUT STD_LOGIC;
         Shift_Val               : OUT STD_LOGIC_VECTOR( 3 DOWNTO 0);
         
-        ALU_Opr                 : OUT STD_LOGIC_VECTOR( 5 DOWNTO 0);
+        ALU_Opr                 : OUT STD_LOGIC_VECTOR( 4 DOWNTO 0);
         Flags_EN                : OUT STD_LOGIC;
         Flags_Restore           : OUT STD_LOGIC;
         
@@ -42,7 +42,7 @@ END ENTITY;
 
 ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
 
-    SIGNAL Instr_Type           : STD_LOGIC;
+    SIGNAL Instr_Type           : STD_LOGIC_VECTOR(1 DOWNTO 0);
 
     SIGNAL MOV_Type             : STD_LOGIC;
     SIGNAL ALU_Type             : STD_LOGIC;
@@ -59,9 +59,11 @@ ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
     SIGNAL ALU_0_Opr            : STD_LOGIC;
 
     SIGNAL Instr_MUL            : STD_LOGIC;
+    SIGNAL Instr_SHF            : STD_LOGIC;
 
     SIGNAL MEM_Load             : STD_LOGIC;
     SIGNAL MEM_Store            : STD_LOGIC;
+    SIGNAL MEM_Read             : STD_LOGIC;
 
     SIGNAL Branch               : STD_LOGIC;
     SIGNAL BranchCond           : STD_LOGIC;
@@ -74,17 +76,17 @@ ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
 BEGIN
 
     Instr_Type      <= Instr(15 DOWNTO 14);
-    MOV_Type        <= (Instr_Type="00");
-    ALU_Type        <= (Instr_Type="01");
-    MEM_Type        <= (Instr_Type="10");
-    JMP_Type        <= (Instr_Type="11");
+    MOV_Type        <= '1' WHEN (Instr_Type="00") ELSE '0';
+    ALU_Type        <= '1' WHEN (Instr_Type="01") ELSE '0';
+    MEM_Type        <= '1' WHEN (Instr_Type="10") ELSE '0';
+    JMP_Type        <= '1' WHEN (Instr_Type="11") ELSE '0';
 
     --===================================================================================
     --
     -- SRC
     --
     Rsrc            <= Instr(2 DOWNTO 0);
-    Rsrc_WB         <= Instr_MUL OR Mem_RD;
+    Rsrc_WB         <= Instr_MUL OR MEM_Read;
     Rsrc_Load       <= ALU_2_Opr OR Branch;
 
     --===================================================================================
@@ -93,7 +95,7 @@ BEGIN
     --
     Rdst            <=  Instr(5 DOWNTO 3);
     Rdst_WB         <=  Stack OR ALU_1_Opr OR ALU_2_Opr OR MOV_Rdst_WB;
-    Rdst_Load       <=  Stack OR ALU_1_Opr OR (ALU_2_Opr AND (NOT Shift_Load));
+    Rdst_Load       <=  Stack OR ALU_1_Opr OR (ALU_2_Opr AND (NOT Instr_SHF));
 
     --===================================================================================
     --
@@ -120,10 +122,11 @@ BEGIN
     ALU_1_Opr       <= ALU_Type AND (NOT Instr(13)) AND Instr(9);
     ALU_0_Opr       <= ALU_Type AND (NOT Instr(13)) AND (NOT Instr(9));
 
+    Shift_Load      <= Instr_SHF;
     Shift_Val       <= Instr(9 DOWNTO 6);
 
-    Instr_MUL       <= ALU_2_Opr AND (ALU_Opcode="010");
-    Shift_Load      <= ALU_2_Opr AND (ALU_Opcode(2 DOWNTO 1)="11");
+    Instr_MUL       <= '1' WHEN (ALU_2_Opr='1' AND Instr(12 DOWNTO 10)="010") ELSE '0';
+    Instr_SHF       <= '1' WHEN (ALU_2_Opr='1' AND Instr(12 DOWNTO 11)="11")  ELSE '0';
 
     Flags_EN        <= ALU_Type;
 
@@ -138,7 +141,8 @@ BEGIN
     Mem_EA          <= Instr(12 DOWNTO 3);
     Mem_EA_Load     <= MEM_Type;
     Mem_Addr_Switch <= Stack_Pop;
-    Mem_RD          <= MEM_Load OR Stack_Pop;
+    MEM_Read        <= MEM_Load OR Stack_Pop;
+    Mem_RD          <= MEM_Read;
     Mem_WR          <= MEM_Store OR Stack_Push;
 
     --===================================================================================

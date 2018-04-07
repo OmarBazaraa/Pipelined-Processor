@@ -78,7 +78,7 @@ BEGIN
     -- Registers
     --
 
-    -- Registers R0 to R5
+    -- Registers R0 to R6
     L1:
     FOR i IN 0 TO 6 GENERATE
         Reg_Din(i)  <= Reg_A_Din WHEN Reg_A_in(i)='1' ELSE Reg_B_Din;

@@ -7,7 +7,7 @@ ENTITY processor IS
         RESET                   : IN  STD_LOGIC;
         INTR                    : IN  STD_LOGIC;
         PORT_IN                 : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
-        PORT_OUT                : IN  STD_LOGIC_VECTOR(15 DOWNTO 0)
+        PORT_OUT                : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
     );
 END ENTITY;
 
@@ -33,7 +33,7 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL PC_EN                : STD_LOGIC;
 
     SIGNAL PC_Cur               : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL PC_Next              : STD_LOGIC_VECTOR(15 DOWNTO 0);
+    SIGNAL PC_Next              : STD_LOGIC_VECTOR(15 DOWNTO 0) := "0000000000000000";
 
     SIGNAL PC_Reset_EN          : STD_LOGIC;
     SIGNAL PC_Reset_Dout        : STD_LOGIC_VECTOR( 9 DOWNTO 0);
@@ -75,7 +75,7 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL DEC_Imm_Load         : STD_LOGIC;
     SIGNAL DEC_Shift_Load       : STD_LOGIC;
     SIGNAL DEC_Shift_Val        : STD_LOGIC_VECTOR( 3 DOWNTO 0);
-    SIGNAL DEC_ALU_Opr          : STD_LOGIC_VECTOR( 5 DOWNTO 0);
+    SIGNAL DEC_ALU_Opr          : STD_LOGIC_VECTOR( 4 DOWNTO 0);
     SIGNAL DEC_Flags_EN         : STD_LOGIC;
     SIGNAL DEC_Flags_Restore    : STD_LOGIC;
     SIGNAL DEC_Mem_EA           : STD_LOGIC_VECTOR( 9 DOWNTO 0);
@@ -183,7 +183,6 @@ BEGIN
         Dout            => Instr
     );
 
-
     PC_RESET:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 10)
@@ -195,8 +194,8 @@ BEGIN
     PORT MAP(EXT_CLK, HARD_RST, PC_INTR_EN, '0', MEM_Din(9 DOWNTO 0), PC_INTR_Dout);
 
     PC_EN       <= NOT Stall;
-    PC_Reset_EN <= MEM_WR AND MEM_Addr=(0 => '0', OTHERS => '0');
-    PC_INTR_EN  <= MEM_WR AND MEM_Addr=(0 => '1', OTHERS => '0');
+    PC_Reset_EN <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000000") ELSE '0';
+    PC_INTR_EN  <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000001") ELSE '0';
     Instr_Addr  <= PC_Cur(9 DOWNTO 0);
 
     --===================================================================================
@@ -216,7 +215,7 @@ BEGIN
     -------------------------------------------------------
 
     DEC_CIRCUIT:
-    ENTITY work.decode_circuit
+    ENTITY work.decode_ciruit
     PORT MAP(
         Instr           => DEC_IR_Dout,
         Flags           => Flags_Dout,
@@ -251,7 +250,7 @@ BEGIN
         
         PC_Flags_Save   => DEC_PC_Flags_Save,
         
-        Branch_Taken    => DEC_Branch_Taken,
+        Branch_Taken    => DEC_Branch_Taken
     );
 
     REG_FILE:
@@ -283,71 +282,71 @@ BEGIN
     HAZARD_UNIT:
     ENTITY work.hazard_unit
     PORT MAP(
-        RESET           => RESET,
-        INTR            => INTR,
+        RESET               => RESET,
+        INTR                => INTR,
 
         --
         -- Control signals of decode stage
         --
 
-        Rsrc            => DEC_Rsrc,
-        Rsrc_WB         => DEC_Rsrc_WB,
-        Rsrc_Load       => DEC_Rsrc_Load,
-        Rsrc_Data       => DEC_Rsrc_Dout,
+        Rsrc                => DEC_Rsrc,
+        Rsrc_WB             => DEC_Rsrc_WB,
+        Rsrc_Load           => DEC_Rsrc_Load,
+        Rsrc_Data           => DEC_Rsrc_Dout,
 
-        Rdst            => DEC_Rdst,
-        Rdst_WB         => DEC_Rdst_WB,
-        Rdst_Load       => DEC_Rdst_Load,
-        Rdst_Data       => DEC_Rdst_Dout,
+        Rdst                => DEC_Rdst,
+        Rdst_WB             => DEC_Rdst_WB,
+        Rdst_Load           => DEC_Rdst_Load,
+        Rdst_Data           => DEC_Rdst_Dout,
         
-        Immediate_Load  => DEC_Imm_Load,
-        Immediate_Val   => Instr,
+        Immediate_Load      => DEC_Imm_Load,
+        Immediate_Val       => Instr,
 
-        Shift_Load      => DEC_Shift_Load,
-        Shift_Val       => DEC_Shift_Val,
+        Shift_Load          => DEC_Shift_Load,
+        Shift_Val           => DEC_Shift_Val,
 
-        PC_Flags_Save   => DEC_PC_Flags_Save,
-        PC_Fetching     => PC_Cur,
-        PC_Reset        => PC_Reset_Dout,
-        PC_INTR         => PC_INTR_Dout,
-        Flags           => Flags_Dout,
+        PC_Flags_Save       => DEC_PC_Flags_Save,
+        PC_Fetching         => PC_Cur(9 DOWNTO 0),
+        PC_Reset            => PC_Reset_Dout,
+        PC_INTR             => PC_INTR_Dout,
+        Flags               => Flags_Dout,
 
-        Mem_Addr_Switch => DEC_Mem_Addr_Switch,
-        Mem_EA_Load     => DEC_Mem_EA_Load,
-        Mem_EA          => DEC_Mem_EA,
+        Mem_Addr_Switch     => DEC_Mem_Addr_Switch,
+        Mem_EA_Load         => DEC_Mem_EA_Load,
+        Mem_EA              => DEC_Mem_EA,
 
-        Port_In_RD      => DEC_Port_In_RD,
-        Port_In_Data    => PORT_IN,
+        Port_In_RD          => DEC_Port_In_RD,
+        Port_In_Data        => PORT_IN,
 
-        Branch_Taken    => DEC_Branch_Taken,
+        Branch_Taken        => DEC_Branch_Taken,
 
         --
         -- Inputs of forward stages
         --
 
-        EXE_Src         => EXE_Src,
-        EXE_Dst         => EXE_Dst,
-        EXE_Ctrl        => EXE_Ctrl,
-
-        MEM_Src         => MEM_Src,
-        MEM_Dst         => MEM_Dst,
-        MEM_Ctrl        => MEM_Ctrl,
-
-        WRB_Src         => WRB_Src,
-        WRB_Dst         => WRB_Dst,
-        WRB_Ctrl        => WRB_CTRL,
+        EXE_Src             => EXE_Src,
+        EXE_Dst             => EXE_Dst,
+        EXE_Ctrl            => EXE_Ctrl,
+    
+        MEM_Src             => MEM_Src,
+        MEM_Dst             => MEM_Dst,
+        MEM_Ctrl            => MEM_Ctrl,
+    
+        WRB_Src             => WRB_Src,
+        WRB_Dst             => WRB_Dst,
+        WRB_Ctrl            => WRB_CTRL,
 
         --
         -- Outputs
         --
 
-        Src_Dout        => EXE_Src_Din,
-        Dst_Dout        => EXE_Dst_Din,
+        Src_Dout            => EXE_Src_Din,
+        Dst_Dout            => EXE_Dst_Din,
 
-        PC_Next         => PC_Next,
+        PC_Next(9 DOWNTO 0) => PC_Next,
 
-        Stall           => Stall,
-        Flush           => Flush,
+        Stall               => Stall,
+        Flush               => Flush
     );
 
     EXE_Ctrl_Din    <=  DEC_ALU_Opr & DEC_Flags_EN & DEC_Flags_Restore &
@@ -439,7 +438,7 @@ BEGIN
     MEM_Flags_Restore   <= MEM_Ctrl(5);
 
     MEM_Addr            <= MEM_Src(9 DOWNTO 0) WHEN MEM_Addr_Switch='1' ELSE MEM_Dst(9 DOWNTO 0);
-    MEM_Din             <= WRB_Src_Data WHEN (WRB_Mem_RD AND WRB_Rsrc=MEM_Src(18 DOWNTO 16)) ELSE MEM_Src(15 DOWNTO 0);
+    MEM_Din             <= WRB_Src_Data WHEN (WRB_Mem_RD='1' AND WRB_Rsrc=MEM_Src(18 DOWNTO 16)) ELSE MEM_Src(15 DOWNTO 0);
     MEM_PC              <= MEM_Dout(9 DOWNTO 0);
     MEM_Flags           <= MEM_Dout(13 DOWNTO 10);
 
@@ -479,7 +478,7 @@ BEGIN
 
     WRB_CTRL_REG:
     ENTITY work.register_edge_rising
-    GENERIC MAP(n => 2)
+    GENERIC MAP(n => 3)
     PORT MAP(EXT_CLK, HARD_RST, '1', '0', WRB_Ctrl_Din, WRB_Ctrl);
 
     -------------------------------------------------------
@@ -496,6 +495,6 @@ BEGIN
     WRB_Rdst        <= WRB_Dst(18 DOWNTO 16);
     WRB_Rdst_WB     <= WRB_Dst(19);
 
-    PORT_OUT        <= WRB_Dst_Data WHEN WRB_Port_Out_WR='1';
+    PORT_OUT        <= WRB_Src_Data WHEN WRB_Port_Out_WR='1';
 
 END ARCHITECTURE;
