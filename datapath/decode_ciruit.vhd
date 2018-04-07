@@ -14,12 +14,11 @@ ENTITY decode_ciruit IS
         Rdst_WB                 : OUT STD_LOGIC;
         Rdst_Load               : OUT STD_LOGIC;
         
+        Immediate_Load          : OUT STD_LOGIC;
+
+        Shift_Load              : OUT STD_LOGIC;
         Shift_Val               : OUT STD_LOGIC_VECTOR( 3 DOWNTO 0);
         
-        Instr_MOV               : OUT STD_LOGIC;
-        Instr_LDM               : OUT STD_LOGIC;
-        Instr_SHIFT             : OUT STD_LOGIC;
-
         ALU_Opr                 : OUT STD_LOGIC_VECTOR( 5 DOWNTO 0);
         Flags_EN                : OUT STD_LOGIC;
         Flags_Restore           : OUT STD_LOGIC;
@@ -32,8 +31,10 @@ ENTITY decode_ciruit IS
         
         Port_In_RD              : OUT STD_LOGIC;
         Port_Out_WR             : OUT STD_LOGIC;
+
+        MOV                     : OUT STD_LOGIC;
         
-        PC_Save                 : OUT STD_LOGIC;
+        PC_Flags_Save           : OUT STD_LOGIC;
         
         Branch_Taken            : OUT STD_LOGIC
     );
@@ -92,7 +93,7 @@ BEGIN
     --
     Rdst            <=  Instr(5 DOWNTO 3);
     Rdst_WB         <=  Stack OR ALU_1_Opr OR ALU_2_Opr OR MOV_Rdst_WB;
-    Rdst_Load       <=  Stack OR ALU_1_Opr OR (ALU_2_Opr AND (NOT Instr_SHIFT));
+    Rdst_Load       <=  Stack OR ALU_1_Opr OR (ALU_2_Opr AND (NOT Shift_Load));
 
     --===================================================================================
     --
@@ -100,8 +101,8 @@ BEGIN
     --
 
     MOV_Rdst_WB     <= MOV_Type AND Instr(13);
-    Instr_MOV       <= MOV_Type AND Instr(12);
-    Instr_LDM       <= MOV_Type AND Instr(11);
+    MOV             <= MOV_Type AND Instr(12);
+    Immediate_Load  <= MOV_Type AND Instr(11);
     Port_In_RD      <= MOV_Type AND Instr(10);
     Port_Out_WR     <= MOV_Type AND Instr( 9);
 
@@ -122,7 +123,7 @@ BEGIN
     Shift_Val       <= Instr(9 DOWNTO 6);
 
     Instr_MUL       <= ALU_2_Opr AND (ALU_Opcode="010");
-    Instr_SHIFT     <= ALU_2_Opr AND (ALU_Opcode(2 DOWNTO 1)="11");
+    Shift_Load      <= ALU_2_Opr AND (ALU_Opcode(2 DOWNTO 1)="11");
 
     Flags_EN        <= ALU_Type;
 
@@ -154,7 +155,7 @@ BEGIN
     Stack_Pop       <= Stack AND Instr(9);
 
     Flags_Restore   <= JMP_Type AND Instr(8);
-    PC_Save         <= JMP_Type AND Instr(7);
+    PC_Flags_Save   <= JMP_Type AND Instr(7);
 
     WITH BranchSwitch SELECT
         BranchCond  <=  '1'         WHEN "00",
