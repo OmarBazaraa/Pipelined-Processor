@@ -75,7 +75,7 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL DEC_Imm_Load         : STD_LOGIC;
     SIGNAL DEC_Shift_Load       : STD_LOGIC;
     SIGNAL DEC_Shift_Val        : STD_LOGIC_VECTOR( 3 DOWNTO 0);
-    SIGNAL DEC_ALU_Opr          : STD_LOGIC_VECTOR( 4 DOWNTO 0);
+    SIGNAL DEC_ALU_Opr          : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL DEC_Flags_EN         : STD_LOGIC;
     SIGNAL DEC_Flags_Restore    : STD_LOGIC;
     SIGNAL DEC_Mem_EA           : STD_LOGIC_VECTOR( 9 DOWNTO 0);
@@ -99,14 +99,14 @@ ARCHITECTURE arch_processor OF processor IS
 
     SIGNAL EXE_Src_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL EXE_Dst_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL EXE_Ctrl_Din         : STD_LOGIC_VECTOR(11 DOWNTO 0);
+    SIGNAL EXE_Ctrl_Din         : STD_LOGIC_VECTOR(10 DOWNTO 0);
     
     -- To execute stage
     SIGNAL EXE_Src              : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL EXE_Dst              : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL EXE_Ctrl             : STD_LOGIC_VECTOR(11 DOWNTO 0);
+    SIGNAL EXE_Ctrl             : STD_LOGIC_VECTOR(10 DOWNTO 0);
 
-    SIGNAL EXE_Opr              : STD_LOGIC_VECTOR( 4 DOWNTO 0);
+    SIGNAL EXE_Opr              : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL EXE_Res1             : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL EXE_Res2             : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL EXE_Flags            : STD_LOGIC_VECTOR( 3 DOWNTO 0);
@@ -372,12 +372,12 @@ BEGIN
 
     EXE_CTRL_REG:
     ENTITY work.register_edge_falling
-    GENERIC MAP(n => 12)
+    GENERIC MAP(n => 11)
     PORT MAP(EXT_CLK, EXE_RST, '1', '0', EXE_Ctrl_Din, EXE_Ctrl);
 
     -------------------------------------------------------
 
-    EXE_Opr         <= EXE_Ctrl(11 DOWNTO 7);
+    EXE_Opr         <= EXE_Ctrl(10 DOWNTO 7);
     EXE_Flags_EN    <= EXE_Ctrl(6);
 
     EXE_ALU:
@@ -387,6 +387,7 @@ BEGIN
         Opr     => EXE_Opr,
         A       => EXE_Src(15 DOWNTO 0),
         B       => EXE_Dst(15 DOWNTO 0),
+        Cin     => Flags_Dout(2),
         Res1    => EXE_Res1,
         Res2    => EXE_Res2,
         Flags   => EXE_Flags

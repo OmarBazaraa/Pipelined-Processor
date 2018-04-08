@@ -49,7 +49,7 @@ ENTITY hazard_unit IS
 
         EXE_Src                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
         EXE_Dst                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
-        EXE_Ctrl                : IN  STD_LOGIC_VECTOR(11 DOWNTO 0);
+        EXE_Ctrl                : IN  STD_LOGIC_VECTOR(10 DOWNTO 0);
 
         MEM_Src                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
         MEM_Dst                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
@@ -144,7 +144,7 @@ BEGIN
 
 
     Eff_Addr    <=  "000000" & Mem_EA;
-    Shift_Data  <=  "00000000000" & (('0' & Shift_Val) + "00001");
+    Shift_Data  <=  "000000000000" & Shift_Val;
 
     --===================================================================================
     --

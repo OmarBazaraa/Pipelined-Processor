@@ -19,7 +19,7 @@ ENTITY decode_ciruit IS
         Shift_Load              : OUT STD_LOGIC;
         Shift_Val               : OUT STD_LOGIC_VECTOR( 3 DOWNTO 0);
         
-        ALU_Opr                 : OUT STD_LOGIC_VECTOR( 4 DOWNTO 0);
+        ALU_Opr                 : OUT STD_LOGIC_VECTOR( 3 DOWNTO 0);
         Flags_EN                : OUT STD_LOGIC;
         Flags_Restore           : OUT STD_LOGIC;
         
@@ -49,21 +49,16 @@ ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
     SIGNAL MEM_Type             : STD_LOGIC;
     SIGNAL JMP_Type             : STD_LOGIC;
 
-    SIGNAL MOV_Rdst_WB          : STD_LOGIC;
+    SIGNAL MOV_Write            : STD_LOGIC;
 
-    SIGNAL ALU_Opcode           : STD_LOGIC_VECTOR(4 DOWNTO 0);
-    SIGNAL ALU_Stack            : STD_LOGIC_VECTOR(4 DOWNTO 0);
+    SIGNAL ALU_Stack            : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    SIGNAL ALU_Write            : STD_LOGIC;
+    SIGNAL ALU_MUL              : STD_LOGIC;
+    SIGNAL ALU_SHF              : STD_LOGIC;
 
-    SIGNAL ALU_2_Opr            : STD_LOGIC;
-    SIGNAL ALU_1_Opr            : STD_LOGIC;
-    SIGNAL ALU_0_Opr            : STD_LOGIC;
-
-    SIGNAL Instr_MUL            : STD_LOGIC;
-    SIGNAL Instr_SHF            : STD_LOGIC;
-
-    SIGNAL MEM_Load             : STD_LOGIC;
-    SIGNAL MEM_Store            : STD_LOGIC;
-    SIGNAL MEM_Read             : STD_LOGIC;
+    SIGNAL Mem_Load             : STD_LOGIC;
+    SIGNAL Mem_Store            : STD_LOGIC;
+    SIGNAL Mem_Read             : STD_LOGIC;
 
     SIGNAL Branch               : STD_LOGIC;
     SIGNAL BranchCond           : STD_LOGIC;
@@ -86,23 +81,23 @@ BEGIN
     -- SRC
     --
     Rsrc            <= Instr(2 DOWNTO 0);
-    Rsrc_WB         <= Instr_MUL OR MEM_Read;
-    Rsrc_Load       <= ALU_2_Opr OR Branch;
+    Rsrc_WB         <= ALU_MUL OR Mem_Read;
+    Rsrc_Load       <= ALU_Write OR Branch;
 
     --===================================================================================
     --
     -- DST
     --
-    Rdst            <=  Instr(5 DOWNTO 3);
-    Rdst_WB         <=  Stack OR ALU_1_Opr OR ALU_2_Opr OR MOV_Rdst_WB;
-    Rdst_Load       <=  Stack OR ALU_1_Opr OR (ALU_2_Opr AND (NOT Instr_SHF));
+    Rdst            <= Instr(5 DOWNTO 3);
+    Rdst_WB         <= Stack OR (ALU_Write OR MOV_Write);
+    Rdst_Load       <= Stack OR (ALU_Write AND (NOT ALU_SHF));
 
     --===================================================================================
     --
     -- Move Instructions
     --
 
-    MOV_Rdst_WB     <= MOV_Type AND Instr(13);
+    MOV_Write       <= MOV_Type AND Instr(13);
     MOV             <= MOV_Type AND Instr(12);
     Immediate_Load  <= MOV_Type AND Instr(11);
     Port_In_RD      <= MOV_Type AND Instr(10);
@@ -113,21 +108,15 @@ BEGIN
     -- ALU Instructions
     --
 
-    ALU_Opr         <= ALU_Opcode WHEN ALU_Type='1' ELSE ALU_Stack;
+    ALU_Opr         <= Instr(13 DOWNTO 10) WHEN ALU_Type='1' ELSE ALU_Stack;
 
-    ALU_Opcode      <= Instr(13) & (Instr(9) AND (NOT Instr(13))) & Instr(12 DOWNTO 10);
-    ALU_Stack       <= ("0" & Stack & "00" & Stack_Push);   -- INC / DEC
+    ALU_Stack       <= ("0" & Stack & Stack & Stack_Push);   -- INC / DEC
+    ALU_Write       <= Instr(13) OR Instr(12);
+    ALU_MUL         <= '1' WHEN (ALU_Type='1' AND Instr(13 DOWNTO 10)="1000")   ELSE '0';
+    ALU_SHF         <= '1' WHEN (ALU_Type='1' AND Instr(13 DOWNTO 11)="111")    ELSE '0';
 
-    ALU_2_Opr       <= ALU_Type AND Instr(13);
-    ALU_1_Opr       <= ALU_Type AND (NOT Instr(13)) AND Instr(9);
-    ALU_0_Opr       <= ALU_Type AND (NOT Instr(13)) AND (NOT Instr(9));
-
-    Shift_Load      <= Instr_SHF;
+    Shift_Load      <= ALU_SHF;
     Shift_Val       <= Instr(9 DOWNTO 6);
-
-    Instr_MUL       <= '1' WHEN (ALU_2_Opr='1' AND Instr(12 DOWNTO 10)="010") ELSE '0';
-    Instr_SHF       <= '1' WHEN (ALU_2_Opr='1' AND Instr(12 DOWNTO 11)="11")  ELSE '0';
-
     Flags_EN        <= ALU_Type;
 
     --===================================================================================
@@ -135,23 +124,22 @@ BEGIN
     -- Memory Instructions
     --
 
-    MEM_Load        <= MEM_Type AND Instr(13);
-    MEM_Store       <= MEM_Type AND (NOT Instr(13));
-
     Mem_EA          <= Instr(12 DOWNTO 3);
     Mem_EA_Load     <= MEM_Type;
     Mem_Addr_Switch <= Stack_Pop;
-    MEM_Read        <= MEM_Load OR Stack_Pop;
-    Mem_RD          <= MEM_Read;
-    Mem_WR          <= MEM_Store OR Stack_Push;
+    Mem_Load        <= MEM_Type AND Instr(13);
+    Mem_Store       <= MEM_Type AND (NOT Instr(13));
+    Mem_Read        <= Mem_Load OR Stack_Pop;
+    Mem_RD          <= Mem_Read;
+    Mem_WR          <= Mem_Store OR Stack_Push;
 
     --===================================================================================
     --
     -- Branch & Stack Instructions
     --
 
-    BranchSwitch    <= Instr(13 DOWNTO 12);
     Branch          <= JMP_Type AND Instr(11);
+    BranchSwitch    <= Instr(13 DOWNTO 12);
     Branch_Taken    <= Branch AND BranchCond;
 
     Stack           <= JMP_Type AND Instr(10);
@@ -162,7 +150,7 @@ BEGIN
     PC_Flags_Save   <= JMP_Type AND Instr(7);
 
     WITH BranchSwitch SELECT
-        BranchCond  <=  '1'         WHEN "00",
+    BranchCond      <=  '1'         WHEN "00",
                         Flags(0)    WHEN "01",
                         Flags(1)    WHEN "10",
                         Flags(2)    WHEN OTHERS;
