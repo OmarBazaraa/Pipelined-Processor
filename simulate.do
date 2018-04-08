@@ -1,69 +1,103 @@
 quit -sim
 
-vsim -gui work.register_file
+vsim -gui work.decode_ciruit
 
 #
 # Add waves
 #
 add wave -position insertpoint  \
-sim:/register_file/CLK \
-sim:/register_file/RST \
-sim:/register_file/PC_WR \
-sim:/register_file/PC_Din \
-sim:/register_file/Reg_A_WR \
-sim:/register_file/Reg_A_WR_Addr \
-sim:/register_file/Reg_A_Din \
-sim:/register_file/Reg_B_WR \
-sim:/register_file/Reg_B_WR_Addr \
-sim:/register_file/Reg_B_Din \
-sim:/register_file/PC_Dout \
-sim:/register_file/Reg_A_RD_Addr \
-sim:/register_file/Reg_A_Dout \
-sim:/register_file/Reg_B_RD_Addr \
-sim:/register_file/Reg_B_Dout \
-sim:/register_file/Reg_Din \
-sim:/register_file/Reg_Dout \
-sim:/register_file/Reg_EN \
-sim:/register_file/Reg_A_in \
-sim:/register_file/Reg_B_in \
-sim:/register_file/Reg_A_out \
-sim:/register_file/Reg_B_out
-
-#
-# Initial values
-#
-force -freeze sim:/register_file/CLK 0 0, 1 {50 ps} -r 100
-force -freeze sim:/register_file/RST 1 0
-force -freeze sim:/register_file/PC_WR 0 0
-force -freeze sim:/register_file/PC_Din x\"0000\" 0
-force -freeze sim:/register_file/Reg_A_WR 0 0
-force -freeze sim:/register_file/Reg_A_WR_Addr 000 0
-force -freeze sim:/register_file/Reg_A_Din x\"0000\" 0
-force -freeze sim:/register_file/Reg_B_WR 0 0
-force -freeze sim:/register_file/Reg_B_WR_Addr 000 0
-force -freeze sim:/register_file/Reg_B_Din x\"0000\" 0
-force -freeze sim:/register_file/Reg_A_RD_Addr 000 0
-force -freeze sim:/register_file/Reg_B_RD_Addr 001 0
-run
+sim:/decode_ciruit/Instr \
+sim:/decode_ciruit/Flags \
+sim:/decode_ciruit/Rsrc \
+sim:/decode_ciruit/Rsrc_WB \
+sim:/decode_ciruit/Rsrc_Load \
+sim:/decode_ciruit/Rdst \
+sim:/decode_ciruit/Rdst_WB \
+sim:/decode_ciruit/Rdst_Load \
+sim:/decode_ciruit/Immediate_Load \
+sim:/decode_ciruit/Shift_Load \
+sim:/decode_ciruit/Shift_Val \
+sim:/decode_ciruit/ALU_Opr \
+sim:/decode_ciruit/Flags_EN \
+sim:/decode_ciruit/Flags_Restore \
+sim:/decode_ciruit/Mem_EA \
+sim:/decode_ciruit/Mem_EA_Load \
+sim:/decode_ciruit/Mem_Addr_Switch \
+sim:/decode_ciruit/Mem_RD \
+sim:/decode_ciruit/Mem_WR \
+sim:/decode_ciruit/Port_In_RD \
+sim:/decode_ciruit/Port_Out_WR \
+sim:/decode_ciruit/MOV \
+sim:/decode_ciruit/PC_Flags_Save \
+sim:/decode_ciruit/Branch_Taken
 
 #
 # Start simulation
 #
 
-force -freeze sim:/register_file/RST 0 0
-
-force -freeze sim:/register_file/PC_WR 1 0
-force -freeze sim:/register_file/PC_Din x\"0057\" 0
-
-force -freeze sim:/register_file/Reg_A_WR 1 0
-force -freeze sim:/register_file/Reg_A_WR_Addr 000 0
-force -freeze sim:/register_file/Reg_A_Din x\"0777\" 0
+# STD R6, 1111100000
+force -freeze sim:/decode_ciruit/Instr 1001111100000110 0
+force -freeze sim:/decode_ciruit/Flags 0000 0
 run
 
-force -freeze sim:/register_file/PC_WR 0 0
-force -freeze sim:/register_file/Reg_A_WR 0 0
 
-force -freeze sim:/register_file/Reg_B_WR 1 0
-force -freeze sim:/register_file/Reg_B_WR_Addr 001 0
-force -freeze sim:/register_file/Reg_B_Din x\"8888\" 0
+# LDD R3, 1111100001
+force -freeze sim:/decode_ciruit/Instr 1011111100001011 0
+run
+
+# NOP
+force -freeze sim:/decode_ciruit/Instr 0000000000000000 0
+run
+
+# MOV R1, R2
+force -freeze sim:/decode_ciruit/Instr 0011000000010001 0
+run
+
+# LDM R6, #
+force -freeze sim:/decode_ciruit/Instr 0010100000110000 0
+run
+
+# IN R6
+force -freeze sim:/decode_ciruit/Instr 0010010000110000 0
+run
+
+# OUT R6
+force -freeze sim:/decode_ciruit/Instr 0000001000000110 0
+run
+
+# SETC
+force -freeze sim:/decode_ciruit/Instr 0100100000000000 0
+run
+
+# ADD R5, R6
+force -freeze sim:/decode_ciruit/Instr 0101000000110101 0
+run
+
+# MUL R5, R6
+force -freeze sim:/decode_ciruit/Instr 0110000000110101 0
+run
+
+# SHL R5, #, R6
+force -freeze sim:/decode_ciruit/Instr 0111101010110101 0
+run
+
+# JMP R1
+force -freeze sim:/decode_ciruit/Instr 1100100000110001 0
+run
+
+# JZ R1
+force -freeze sim:/decode_ciruit/Instr 1101100000110001 0
+force -freeze sim:/decode_ciruit/Flags 0001 0
+run
+
+# CALL R1
+force -freeze sim:/decode_ciruit/Instr 1100110010110001 0
+run
+
+# POP R1
+force -freeze sim:/decode_ciruit/Instr 1100011000110001 0
+run
+
+# RTI
+force -freeze sim:/decode_ciruit/Instr 1100011100110111 0
 run

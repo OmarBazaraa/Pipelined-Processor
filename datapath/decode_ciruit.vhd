@@ -111,7 +111,7 @@ BEGIN
     ALU_Opr         <= Instr(13 DOWNTO 10) WHEN ALU_Type='1' ELSE ALU_Stack;
 
     ALU_Stack       <= ("0" & Stack & Stack & Stack_Push);   -- INC / DEC
-    ALU_Write       <= Instr(13) OR Instr(12);
+    ALU_Write       <= ALU_Type AND (Instr(13) OR Instr(12));
     ALU_MUL         <= '1' WHEN (ALU_Type='1' AND Instr(13 DOWNTO 10)="1000")   ELSE '0';
     ALU_SHF         <= '1' WHEN (ALU_Type='1' AND Instr(13 DOWNTO 11)="111")    ELSE '0';
 

@@ -149,6 +149,8 @@ BEGIN
     -- SHL         11 10
     -- SHR         11 11
 
+    -- TODO: Implement SHL & SHR
+    
     --SHL_Res         <=  ;
     --SHR_Res         <=  ;
 
