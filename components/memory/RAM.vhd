@@ -22,12 +22,12 @@ ARCHITECTURE arch_RAM OF RAM IS
     );
 BEGIN
 
-    Dout <= Mem(to_integer(unsigned(Address)));
+    Dout <= Mem(TO_INTEGER(UNSIGNED(Address)));
     
     PROCESS(CLK)
     BEGIN
         IF WR='1' AND RISING_EDGE(CLK) THEN
-            Mem(to_integer(unsigned(Address))) <= Din;
+            Mem(TO_INTEGER(UNSIGNED(Address))) <= Din;
         END IF;
     END PROCESS;
 END ARCHITECTURE;
