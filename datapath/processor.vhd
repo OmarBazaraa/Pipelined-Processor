@@ -405,7 +405,7 @@ BEGIN
 
     FLAG_REG:
     ENTITY work.register_edge_rising
-    GENERIC MAP(n => 16)
+    GENERIC MAP(n => 4)
     PORT MAP(EXT_CLK, HARD_RST, Flags_EN, '0', Flags_Din, Flags_Dout);
 
 
@@ -413,7 +413,7 @@ BEGIN
     MEM_Src_Din(19 DOWNTO 16)   <= EXE_Src(19 DOWNTO 16);
 
     MEM_Dst_Din(15 DOWNTO 0)    <= EXE_Res1;
-    MEM_Dst_Din(19 DOWNTO 16)   <= EXE_Src(19 DOWNTO 16);
+    MEM_Dst_Din(19 DOWNTO 16)   <= EXE_Dst(19 DOWNTO 16);
 
     MEM_Ctrl_Din                <= EXE_Ctrl(5 DOWNTO 0);
 
@@ -502,6 +502,10 @@ BEGIN
     WRB_Rdst        <= WRB_Dst(18 DOWNTO 16);
     WRB_Rdst_WB     <= WRB_Dst(19);
 
-    PORT_OUT        <= WRB_Src_Data WHEN WRB_Port_Out_WR='1';
+
+    PORT_OUT_REG:
+    ENTITY work.register_edge_rising
+    GENERIC MAP(n => 16)
+    PORT MAP(EXT_CLK, HARD_RST, WRB_Port_Out_WR, '0', WRB_Src_Data, PORT_OUT);
 
 END ARCHITECTURE;
