@@ -67,11 +67,11 @@ BEGIN
 
     DEC_A_OUT:
     ENTITY work.decoder_3x8
-    PORT MAP('1', Reg_A_WR_Addr, Reg_A_out);
+    PORT MAP('1', Reg_A_RD_Addr, Reg_A_out);
 
     DEC_B_OUT:
     ENTITY work.decoder_3x8
-    PORT MAP('1', Reg_B_WR_Addr, Reg_B_out);
+    PORT MAP('1', Reg_B_RD_Addr, Reg_B_out);
 
     --===================================================================================
     --

@@ -17,22 +17,13 @@ sim:/processor/Flags_Din \
 sim:/processor/Flags_Dout \
 sim:/processor/Stall \
 sim:/processor/Flush \
-sim:/processor/PC_EN \
 sim:/processor/PC_Cur \
 sim:/processor/PC_Next \
 sim:/processor/PC_Reset_EN \
 sim:/processor/PC_Reset_Dout \
 sim:/processor/PC_INTR_EN \
 sim:/processor/PC_INTR_Dout \
-sim:/processor/Instr_Addr \
-sim:/processor/Instr \
-sim:/processor/Instr_INTR \
-sim:/processor/DEC_IR_EN \
-sim:/processor/DEC_IR_RST \
-sim:/processor/DEC_IR_Din \
 sim:/processor/DEC_IR_Dout \
-sim:/processor/DEC_PC_To_Store_EN \
-sim:/processor/DEC_PC_To_Store_Dout \
 sim:/processor/DEC_Rsrc \
 sim:/processor/DEC_Rsrc_WB \
 sim:/processor/DEC_Rsrc_Load \
@@ -57,10 +48,6 @@ sim:/processor/DEC_Port_Out_WR \
 sim:/processor/DEC_MOV \
 sim:/processor/DEC_PC_Flags_Save \
 sim:/processor/DEC_Branch_Taken \
-sim:/processor/EXE_RST \
-sim:/processor/EXE_Src_Din \
-sim:/processor/EXE_Dst_Din \
-sim:/processor/EXE_Ctrl_Din \
 sim:/processor/EXE_Src \
 sim:/processor/EXE_Dst \
 sim:/processor/EXE_Ctrl \
@@ -69,9 +56,6 @@ sim:/processor/EXE_Res1 \
 sim:/processor/EXE_Res2 \
 sim:/processor/EXE_Flags \
 sim:/processor/EXE_Flags_EN \
-sim:/processor/MEM_Src_Din \
-sim:/processor/MEM_Dst_Din \
-sim:/processor/MEM_Ctrl_Din \
 sim:/processor/MEM_Src \
 sim:/processor/MEM_Dst \
 sim:/processor/MEM_Ctrl \
@@ -82,14 +66,6 @@ sim:/processor/MEM_RD \
 sim:/processor/MEM_Flags_Restore \
 sim:/processor/MEM_Din \
 sim:/processor/MEM_Dout \
-sim:/processor/MEM_PC \
-sim:/processor/MEM_Flags \
-sim:/processor/WRB_Src_Din \
-sim:/processor/WRB_Dst_Din \
-sim:/processor/WRB_Ctrl_Din \
-sim:/processor/WRB_Src \
-sim:/processor/WRB_Dst \
-sim:/processor/WRB_Ctrl \
 sim:/processor/WRB_Src_Data \
 sim:/processor/WRB_Rsrc \
 sim:/processor/WRB_Rsrc_WB \
@@ -106,6 +82,16 @@ sim:/processor/WRB_Mem_RD
 
 # INC R0
 mem load -filltype value -filldata {0101100000000000 } -fillradix binary /processor/PROG_MEM/Mem(0)
+
+# INC R0
+mem load -filltype value -filldata {0101100000000000 } -fillradix binary /processor/PROG_MEM/Mem(1)
+
+# LDM R1, 000F
+mem load -filltype value -filldata {0010100000001000 } -fillradix binary /processor/PROG_MEM/Mem(2)
+mem load -filltype value -filldata {0000000000001111 } -fillradix binary /processor/PROG_MEM/Mem(3)
+
+# ADD R1, R0
+mem load -filltype value -filldata {0101000000000001 } -fillradix binary /processor/PROG_MEM/Mem(4)
 
 #
 # Initial values

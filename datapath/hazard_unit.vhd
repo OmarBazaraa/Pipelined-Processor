@@ -111,7 +111,7 @@ BEGIN
                     MEM_Dst(15 DOWNTO 0)    WHEN (MEM_Dst(19)='1' AND Rsrc=MEM_Dst(18 DOWNTO 16))   ELSE
 
                     -- Forward the output of the memory stage
-                    WRB_Dst(15 DOWNTO 0)    WHEN (WRB_Src(19)='1' AND Rsrc=WRB_Src(18 DOWNTO 16))   ELSE
+                    WRB_Src(15 DOWNTO 0)    WHEN (WRB_Src(19)='1' AND Rsrc=WRB_Src(18 DOWNTO 16))   ELSE
                     WRB_Dst(15 DOWNTO 0)    WHEN (WRB_Dst(19)='1' AND Rsrc=WRB_Dst(18 DOWNTO 16))   ELSE
 
                     -- No forwarding
@@ -138,7 +138,7 @@ BEGIN
                     MEM_Dst(15 DOWNTO 0)    WHEN (MEM_Dst(19)='1' AND Rdst=MEM_Dst(18 DOWNTO 16))   ELSE
 
                     -- Forward the output of the memory stage
-                    WRB_Dst(15 DOWNTO 0)    WHEN (WRB_Src(19)='1' AND Rdst=WRB_Src(18 DOWNTO 16))   ELSE
+                    WRB_Src(15 DOWNTO 0)    WHEN (WRB_Src(19)='1' AND Rdst=WRB_Src(18 DOWNTO 16))   ELSE
                     WRB_Dst(15 DOWNTO 0)    WHEN (WRB_Dst(19)='1' AND Rdst=WRB_Dst(18 DOWNTO 16))   ELSE
 
                     -- No forwarding
