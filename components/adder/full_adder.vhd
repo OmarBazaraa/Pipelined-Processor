@@ -14,5 +14,5 @@ ARCHITECTURE arch_full_adder OF full_adder IS
 BEGIN
 
     Sum     <= (A XOR B XOR Cin);
-    Cout    <= (A AND B) OR (Cin AND (A XOR B));
+    Cout    <= (A AND B) OR (Cin AND (A OR B));
 END ARCHITECTURE;

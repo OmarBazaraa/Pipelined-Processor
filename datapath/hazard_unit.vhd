@@ -30,6 +30,7 @@ ENTITY hazard_unit IS
 
         PC_Flags_Save           : IN  STD_LOGIC;
         PC_Fetching             : IN  STD_LOGIC_VECTOR( 9 DOWNTO 0);
+        PC_To_Store             : IN  STD_LOGIC_VECTOR( 9 DOWNTO 0);
         PC_Reset                : IN  STD_LOGIC_VECTOR( 9 DOWNTO 0);
         PC_INTR                 : IN  STD_LOGIC_VECTOR( 9 DOWNTO 0);
         Flags                   : IN  STD_LOGIC_VECTOR( 3 DOWNTO 0);
@@ -89,7 +90,10 @@ ARCHITECTURE hazard_unit OF hazard_unit IS
 
     SIGNAL Load_Depend          : STD_LOGIC;
     SIGNAL Load_PC              : STD_LOGIC;
-    SIGNAL WRB_Load_PC          : STD_LOGIC;
+
+    SIGNAL DEC_PC_WB            : STD_LOGIC;
+    SIGNAL MEM_PC_WB            : STD_LOGIC;
+    SIGNAL WRB_PC_WB            : STD_LOGIC;
 
 BEGIN
 
@@ -116,7 +120,7 @@ BEGIN
     Src_Dout    <=  Rsrc_WB & Rsrc & Src_Data;
 
 
-    PC_Flags    <= "00" & Flags & PC_Fetching;
+    PC_Flags    <= "00" & Flags & PC_To_Store;
 
     --===================================================================================
     --
@@ -153,9 +157,10 @@ BEGIN
 
     PC_Plus_1   <=  PC_Fetching + "0000000001";
 
-    PC_Next     <=  PC_Reset                WHEN RESET='1'          ELSE
-                    Src_Data_FW(9 DOWNTO 0) WHEN Branch_Taken='1'   ELSE
-                    WRB_Src(9 DOWNTO 0)     WHEN WRB_Load_PC='1'    ELSE
+    PC_Next     <=  Src_Data_FW(9 DOWNTO 0) WHEN Branch_Taken='1'   ELSE
+                    WRB_Src(9 DOWNTO 0)     WHEN WRB_PC_WB='1'      ELSE
+                    PC_Reset                WHEN RESET='1'          ELSE
+                    PC_INTR                 WHEN INTR='1'           ELSE
                     PC_Plus_1;
 
     --===================================================================================
@@ -175,15 +180,11 @@ BEGIN
     -- Flush Detection unit
     --
 
-    WRB_Load_PC <=  '1' WHEN
-                            (WRB_Src(19)='1' AND WRB_Src(18 DOWNTO 16)="111") ELSE
-                    '0';
+    DEC_PC_WB   <=  '1' WHEN (Rsrc_WB='1' AND Rsrc="111")                       ELSE '0';
+    MEM_PC_WB   <=  '1' WHEN (MEM_Src(19)='1' AND MEM_Src(18 DOWNTO 16)="111")  ELSE '0';
+    WRB_PC_WB   <=  '1' WHEN (WRB_Src(19)='1' AND WRB_Src(18 DOWNTO 16)="111")  ELSE '0';
 
-    Load_PC     <=  '1' WHEN
-                            (Rsrc_WB='1' AND Rsrc="111") OR
-                            (MEM_Src(19)='1' AND MEM_Src(18 DOWNTO 16)="111") OR
-                            (WRB_Load_PC='1') ELSE
-                    '0';
+    Load_PC     <=  DEC_PC_WB OR MEM_PC_WB OR WRB_PC_WB;
 
     Flush       <=  Immediate_Load OR Branch_Taken OR Load_PC;
 
