@@ -1,0 +1,12 @@
+.CODE
+LDM R1, 0
+INC R1
+MOV R1, R2
+DEC R2
+SUB R1, R2
+
+.DATA
+// Address Data (decimal)
+100 1234
+102 104
+104 3
