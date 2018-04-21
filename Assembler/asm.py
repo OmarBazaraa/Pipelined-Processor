@@ -27,7 +27,6 @@ class Assembler(object):
 
         self.binary_code = []
         self.instructions = self.__read_dict("instructions_dictionary.txt", ' ')
-        print(self.instructions)
 
     def parse(self):
         self.__read_code_file()
@@ -173,7 +172,6 @@ class Assembler(object):
                     for code in ir_code.split(','):
                         f.write(" " * (3 - len(str(size))) + str(size) + ": " + str(code) + '\n')
                         size += 1
-            print(self.current_code_mem_location)
 
     def __save_data(self):
         with open(self.data_output_path, "w") as f:
