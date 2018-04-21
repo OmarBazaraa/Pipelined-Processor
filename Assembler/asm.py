@@ -47,11 +47,10 @@ class Assembler(object):
         ir = ''
         category = -1
         size = 1
+        ir = self.instructions[words[0]]
 
         if len(words) == 1:  # No operand instructions.
             category = Assembler.ZERO_OPERAND_INST
-
-            ir = self.instructions[words[0]]
 
             if len(self.instructions[words[0]]) == 10:  # MOV, IN or OUT instructions.
                 if words[0] == 'mov':
@@ -69,8 +68,6 @@ class Assembler(object):
             if len(words[1].split(",")) == 1:  # One operand instructions.
                 category = Assembler.ONE_OPERAND_INST
 
-                ir = self.instructions[words[0]]
-
                 if words[0][0] == "j":  # Branch instructions
                     src = words[1]
                     ir += "000" + self.registers[src]
@@ -86,23 +83,25 @@ class Assembler(object):
             else:  # Two operand instructions.
                 category = Assembler.TWO_OPERAND_INST
 
-                ir = self.instructions[words[0]]
-
                 if words[0] == "ldm":  # LDM instruction.
                     destination, immediate_value = words[1].split(",")
                     immediate_value = int(immediate_value)
                     ir += self.registers[destination] + "000"
                     ir += "," + ('0' * (NUMBER_OF_BITS - len(bin(immediate_value)[2:]))) + bin(immediate_value)[2:]
 
-                elif len(self.instructions[words[0]]) == 10:  # Two operand ALU instructions.
+                elif words[0] == "ldd" or words[0] == "std":
+                    effective_address, register = words[1].split(",")
+                    effective_address = int(effective_address)
+                    ir += ('0' * (10 - len(bin(effective_address)[2:]))) + bin(effective_address)[2:] + self.registers[
+                        register]
+
+                else:  # Two operand ALU instructions.
                     source, destination = words[1].split(",")
                     ir += self.registers[destination] + self.registers[source]
 
         else:  # Three operand instructions.
             category = Assembler.THREE_OPERAND_INST
             size = 2
-
-            ir = self.instructions[words[0]]
 
             source, immediate_value, destination = words[1].split(",")
             immediate_value = int(immediate_value)
