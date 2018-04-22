@@ -500,7 +500,7 @@ BEGIN
 
     WRB_Dst_Data    <= WRB_Dst(15 DOWNTO 0) WHEN WRB_MOV='0' ELSE WRB_Src(15 DOWNTO 0);
     WRB_Rdst        <= WRB_Dst(18 DOWNTO 16);
-    WRB_Rdst_WB     <= WRB_Dst(19);
+    WRB_Rdst_WB     <= WRB_Dst(19) OR WRB_MOV;
 
 
     PORT_OUT_REG:

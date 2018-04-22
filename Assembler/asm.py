@@ -89,7 +89,7 @@ class Assembler(object):
                     ir += "," + ('0' * (NUMBER_OF_BITS - len(bin(immediate_value)[2:]))) + bin(immediate_value)[2:]
 
                 elif words[0] == "ldd" or words[0] == "std":
-                    effective_address, register = words[1].split(",")
+                    register, effective_address = words[1].split(",")
                     effective_address = int(effective_address)
                     ir += ('0' * (10 - len(bin(effective_address)[2:]))) + bin(effective_address)[2:] + self.registers[
                         register]
