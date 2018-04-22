@@ -76,70 +76,12 @@ sim:/processor/WRB_MOV \
 sim:/processor/WRB_Port_Out_WR \
 sim:/processor/WRB_Mem_RD
 
+
 #
-# Load Instructions
+# Load Memories
 #
-
-#   0.      INC R0
-#   1.      INC R0
-#   2.      LDM R1, 0008
-#   3.      0008
-#   4.      CALL R1
-#   5.      JMP R0
-#   6.
-#   7.
-#   8.      ADD R1, R0
-#   9.      RET
-#   A.      MOV R1, R3
-#   
-# +---------------------------------------------------------------------------------------------------------+
-# | T   | PC    | Instr         | Pipeline                                                                  |
-# +-----+-------+---------------+---------------------------------------------------------------------------+
-# | 1   | 0     | INC R0        | F | D | E | M | W |                                                       |
-# | 2   | 1     | INC R0        |   | F | D | E | M | W |                                                   |
-# | 3   | 2     | LDM R1, 0008  |       | F | D | E | M | W |                                               |
-# | 4   | 3     | #0008         |           | F | D | E | M | W |                                           |
-# | 5   | 4     | CALL R1       |               | F | D | E | M | W |                                       |
-# | 6   | 5     | JMP R0        |                   | F | . | . | . | . |                                   |
-# | 7   | 8     | ADD R1, R0    |                       | F | D | E | M | W |                               |
-# | 8   | 9     | RET           |                           | F | D | E | M | W |                           |
-# | 9   | A     | MOV R1, R3    |                               | F | . | . | . | . |                       |
-# | 10  | B     | NOP           |                                   | F | . | . | . | . |                   |
-# | 11  | C     | NOP           |                                       | F | . | . | . | . |               |
-# | 12  | 5     | JMP R0        |                                           | F | . | E | M | W |           |
-# | 13  | 6     | NOP           |                                               | F | . | . | . | . |       |
-# | 14  | A     | MOV R1, R3    |                                                   | F | D | E | M | W     |
-# | 15  | B     | NOP           |                                                                           |
-# | 16  | C     | NOP           |                                                                           |
-# | 17  | D     | NOP           |                                                                           |
-# | 18  | E     | NOP           |                                                                           |
-# | 19  | F     | NOP           |                                                                           |
-# +-----+-------+---------------+---------------------------------------------------------------------------+
-
-# INC R0
-mem load -filltype value -filldata {0101100000000000 } -fillradix binary /processor/PROG_MEM/Mem(0)
-
-# INC R0
-mem load -filltype value -filldata {0101100000000000 } -fillradix binary /processor/PROG_MEM/Mem(1)
-
-# LDM R1, 0008
-mem load -filltype value -filldata {0010100000001000 } -fillradix binary /processor/PROG_MEM/Mem(2)
-mem load -filltype value -filldata {0000000000001000 } -fillradix binary /processor/PROG_MEM/Mem(3)
-
-# CALL R1
-mem load -filltype value -filldata {1100110010110001 } -fillradix binary /processor/PROG_MEM/Mem(4)
-
-# JMP R0
-mem load -filltype value -filldata {1100100000000000 } -fillradix binary /processor/PROG_MEM/Mem(5)
-
-# ADD R1, R0
-mem load -filltype value -filldata {0101000000000001 } -fillradix binary /processor/PROG_MEM/Mem(8)
-
-# RET
-mem load -filltype value -filldata {1100011000110111 } -fillradix binary /processor/PROG_MEM/Mem(9)
-
-# MOV R1, R3
-mem load -filltype value -filldata {0011000000011001 } -fillradix binary /processor/PROG_MEM/Mem(10)
+mem load -i {test/CODE_RAM.mem} /processor/PROG_MEM/Mem
+mem load -i {test/DATA_RAM.mem} /processor/DATA_MEM/Mem
 
 #
 # Initial values

@@ -1,16 +1,15 @@
 .CODE
-LDM R5, 9
-LDM R6, 14
-LDM R1, 1
 LDD R0, 10
-MOV R1, R3
+LDM R5, 7
+LDM R6, 12
+LDM R1, 1
 MOV R0, R2
-MUL R2, R3
+MUL R2, R1
 DEC R0
 JZ R6
 JMP R5
-STD R3, 1
+STD R1, 1
 
 .DATA
 // Address Data (decimal)
-10 8
+10 4

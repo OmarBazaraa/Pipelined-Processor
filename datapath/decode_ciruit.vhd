@@ -89,7 +89,7 @@ BEGIN
     -- DST
     --
     Rdst            <= Instr(5 DOWNTO 3);
-    Rdst_WB         <= Stack OR (ALU_Write);   -- TODO: [DONE - to be tested] remove Rdst_WB in case of MOV instruction
+    Rdst_WB         <= Stack OR (ALU_Write OR MOV_Write);
     Rdst_Load       <= Stack OR (ALU_Write AND (NOT ALU_SHF));
 
     --===================================================================================

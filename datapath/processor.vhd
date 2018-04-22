@@ -412,7 +412,7 @@ BEGIN
     MEM_Src_Din(15 DOWNTO 0)    <= EXE_Res2;
     MEM_Src_Din(19 DOWNTO 16)   <= EXE_Src(19 DOWNTO 16);
 
-    MEM_Dst_Din(15 DOWNTO 0)    <= EXE_Res1;
+    MEM_Dst_Din(15 DOWNTO 0)    <= EXE_Res1 WHEN EXE_Ctrl(0)='0' ELSE EXE_Src(15 DOWNTO 0);
     MEM_Dst_Din(19 DOWNTO 16)   <= EXE_Dst(19 DOWNTO 16);
 
     MEM_Ctrl_Din                <= EXE_Ctrl(5 DOWNTO 0);
@@ -500,7 +500,7 @@ BEGIN
 
     WRB_Dst_Data    <= WRB_Dst(15 DOWNTO 0) WHEN WRB_MOV='0' ELSE WRB_Src(15 DOWNTO 0);
     WRB_Rdst        <= WRB_Dst(18 DOWNTO 16);
-    WRB_Rdst_WB     <= WRB_Dst(19) OR WRB_MOV;
+    WRB_Rdst_WB     <= WRB_Dst(19);
 
 
     PORT_OUT_REG:
