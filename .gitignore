@@ -6,5 +6,6 @@
 *.qtl
 *.mpf
 *.wlf
+*.mem
 .DS_Store
 work/
