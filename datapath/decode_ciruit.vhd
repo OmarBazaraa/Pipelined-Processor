@@ -50,6 +50,7 @@ ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
     SIGNAL JMP_Type             : STD_LOGIC;
 
     SIGNAL MOV_Write            : STD_LOGIC;
+    SIGNAL MOV_Instr            : STD_LOGIC;
 
     SIGNAL ALU_Stack            : STD_LOGIC_VECTOR(3 DOWNTO 0);
     SIGNAL ALU_Write            : STD_LOGIC;
@@ -82,7 +83,7 @@ BEGIN
     --
     Rsrc            <= Instr(2 DOWNTO 0);
     Rsrc_WB         <= ALU_MUL OR Mem_Read;
-    Rsrc_Load       <= ALU_Write OR Branch;
+    Rsrc_Load       <= ALU_Write OR Branch OR MOV_Instr;
 
     --===================================================================================
     --
@@ -98,7 +99,8 @@ BEGIN
     --
 
     MOV_Write       <= MOV_Type AND Instr(13);
-    MOV             <= MOV_Type AND Instr(12);
+    MOV_Instr       <= MOV_Type AND Instr(12);
+    MOV             <= MOV_Instr;
     Immediate_Load  <= MOV_Type AND Instr(11);
     Port_In_RD      <= MOV_Type AND Instr(10);
     Port_Out_WR     <= MOV_Type AND Instr( 9);
