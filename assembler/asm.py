@@ -62,7 +62,7 @@ class Assembler(object):
                     source = words[1]
                     ir += "000" + self.registers[source]
 
-        elif len(words[1].split(",")) == 2:
+        elif len(words[1].split(",")) < 3:
 
             if len(words[1].split(",")) == 1:  # One operand instructions.
                 category = Assembler.ONE_OPERAND_INST
