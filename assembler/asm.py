@@ -62,7 +62,7 @@ class Assembler(object):
                     source = words[1]
                     ir += "000" + self.registers[source]
 
-        elif len(words) == 2:
+        elif len(words[1].split(",")) == 2:
 
             if len(words[1].split(",")) == 1:  # One operand instructions.
                 category = Assembler.ONE_OPERAND_INST
@@ -101,18 +101,16 @@ class Assembler(object):
         else:  # Three operand instructions.
             category = Assembler.THREE_OPERAND_INST
             size = 2
-
             source, immediate_value, destination = words[1].split(",")
             immediate_value = int(immediate_value)
-
             # Ignore instructions if the immediate shift value is zero
             if immediate_value <= 0:
                 size = 0
 
             # Limit immediate value to max 16
-            immediate_value = min(16, immediate_value)
+            immediate_value = min(15, immediate_value - 1)
 
-            ir += ('0' * (NUMBER_OF_BITS - len(bin(immediate_value - 1)[2:]))) + bin(immediate_value - 1)[2:] + \
+            ir += ('0' * (4 - len(bin(immediate_value)[2:]))) + bin(immediate_value)[2:] + \
                   self.registers[destination] + self.registers[source]
 
         return ir, category, size
