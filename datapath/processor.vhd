@@ -5,7 +5,7 @@ ENTITY processor IS
     PORT(
         EXT_CLK, HARD_RST       : IN  STD_LOGIC;
         RESET                   : IN  STD_LOGIC;
-        INTR                    : IN  STD_LOGIC;
+        EXT_INTR                : IN  STD_LOGIC;
         PORT_IN                 : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
         PORT_OUT                : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
     );
@@ -17,6 +17,10 @@ ARCHITECTURE arch_processor OF processor IS
     --
     -- Global Control Signals
     --
+
+    SIGNAL INTR                 : STD_LOGIC;
+    SIGNAL INTR_ACK             : STD_LOGIC;
+    SIGNAL INTR_RST             : STD_LOGIC;
 
     SIGNAL Flags_EN             : STD_LOGIC;
     SIGNAL Flags_Din            : STD_LOGIC_VECTOR( 3 DOWNTO 0);
@@ -44,7 +48,7 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL Instr_Addr           : STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
     SIGNAL Instr                : STD_LOGIC_VECTOR(15 DOWNTO 0);
-    SIGNAL Instr_INTR           : STD_LOGIC_VECTOR(15 DOWNTO 0) := "1100010010110000";
+    SIGNAL Instr_INTR           : STD_LOGIC_VECTOR(15 DOWNTO 0) := "1100010011110000";
 
     -------------------------------------------------------
     --
@@ -167,6 +171,18 @@ BEGIN
 
     --===================================================================================
     --
+    -- Interrupt Circuit
+    --
+
+    INTR_RST    <= HARD_RST OR INTR_ACK;
+
+    -- TODO: Think of better approach. This is so sensitive to glitches
+    INTR_FLIP_FLOP:
+    ENTITY work.flip_flop
+    PORT MAP(EXT_INTR, INTR_RST, '1', INTR);
+
+    --===================================================================================
+    --
     -- Fetch Stage
     --
 
@@ -252,10 +268,9 @@ BEGIN
         Port_Out_WR     => DEC_Port_Out_WR,
 
         MOV             => DEC_MOV,
-        
         PC_Flags_Save   => DEC_PC_Flags_Save,
-        
-        Branch_Taken    => DEC_Branch_Taken
+        Branch_Taken    => DEC_Branch_Taken,
+        Intr_Ack        => INTR_ACK
     );
 
     REG_FILE:

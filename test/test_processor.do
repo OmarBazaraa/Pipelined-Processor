@@ -9,12 +9,11 @@ add wave -position insertpoint  \
 sim:/processor/EXT_CLK \
 sim:/processor/HARD_RST \
 sim:/processor/RESET \
-sim:/processor/INTR \
+sim:/processor/EXT_INTR \
 sim:/processor/PORT_IN \
 sim:/processor/PORT_OUT \
-sim:/processor/Flags_EN \
-sim:/processor/Flags_Din \
-sim:/processor/Flags_Dout \
+sim:/processor/INTR \
+sim:/processor/INTR_ACK \
 sim:/processor/Stall \
 sim:/processor/Flush \
 sim:/processor/PC_Cur \
@@ -74,8 +73,10 @@ sim:/processor/WRB_Rdst \
 sim:/processor/WRB_Rdst_WB \
 sim:/processor/WRB_MOV \
 sim:/processor/WRB_Port_Out_WR \
-sim:/processor/WRB_Mem_RD
-
+sim:/processor/WRB_Mem_RD \
+sim:/processor/Flags_EN \
+sim:/processor/Flags_Din \
+sim:/processor/Flags_Dout
 
 #
 # Load Memories
@@ -89,13 +90,12 @@ mem load -i {test/DATA_RAM.mem} /processor/DATA_MEM/Mem
 force -freeze sim:/processor/EXT_CLK 0 0, 1 {50 ps} -r 100
 force -freeze sim:/processor/HARD_RST 1 0
 force -freeze sim:/processor/RESET 0 0
-force -freeze sim:/processor/INTR 0 0
+force -freeze sim:/processor/EXT_INTR 0 0
 force -freeze sim:/processor/PORT_IN x"0000" 0
 run
 
 #
 # Start simulation
 #
-
 force -freeze sim:/processor/HARD_RST 0 0
 run

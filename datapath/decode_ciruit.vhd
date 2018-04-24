@@ -33,10 +33,9 @@ ENTITY decode_ciruit IS
         Port_Out_WR             : OUT STD_LOGIC;
 
         MOV                     : OUT STD_LOGIC;
-        
         PC_Flags_Save           : OUT STD_LOGIC;
-        
-        Branch_Taken            : OUT STD_LOGIC
+        Branch_Taken            : OUT STD_LOGIC;
+        Intr_Ack                : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -143,6 +142,7 @@ BEGIN
     Branch          <= JMP_Type AND Instr(11);
     BranchSwitch    <= Instr(13 DOWNTO 12);
     Branch_Taken    <= Branch AND BranchCond;
+    Intr_Ack        <= JMP_Type AND Instr(6);
 
     Stack           <= JMP_Type AND Instr(10);
     Stack_Push      <= Stack AND (NOT Instr(9));
