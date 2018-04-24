@@ -218,7 +218,7 @@ BEGIN
     --
 
     DEC_IR_EN           <= NOT Stall;
-    DEC_IR_RST          <= HARD_RST OR (Flush AND (NOT Stall));
+    DEC_IR_RST          <= HARD_RST OR RESET OR (Flush AND (NOT Stall));
     DEC_IR_Din          <= Instr WHEN INTR='0' ELSE Instr_INTR;
 
     DEC_PC_To_Store_EN  <= NOT INTR;
@@ -379,7 +379,7 @@ BEGIN
     -- Execute Stage
     --
 
-    EXE_RST     <= HARD_RST OR Stall;
+    EXE_RST     <= HARD_RST OR RESET OR Stall;
 
     EXE_SRC_REG:
     ENTITY work.register_edge_falling
