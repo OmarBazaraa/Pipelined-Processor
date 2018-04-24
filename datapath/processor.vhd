@@ -200,12 +200,12 @@ BEGIN
     PC_RESET:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 10)
-    PORT MAP(EXT_CLK, HARD_RST, PC_Reset_EN, '0', MEM_Din(9 DOWNTO 0), PC_Reset_Dout);
+    PORT MAP(EXT_CLK, HARD_RST, PC_Reset_EN, MEM_Din(9 DOWNTO 0), PC_Reset_Dout);
 
     PC_INTR:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 10)
-    PORT MAP(EXT_CLK, HARD_RST, PC_INTR_EN, '0', MEM_Din(9 DOWNTO 0), PC_INTR_Dout);
+    PORT MAP(EXT_CLK, HARD_RST, PC_INTR_EN, MEM_Din(9 DOWNTO 0), PC_INTR_Dout);
 
     PC_EN       <= NOT Stall;
     PC_Reset_EN <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000000") ELSE '0';
@@ -226,12 +226,12 @@ BEGIN
     DEC_IR:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 16)
-    PORT MAP(EXT_CLK, DEC_IR_RST, DEC_IR_EN, '0', DEC_IR_Din, DEC_IR_Dout);
+    PORT MAP(EXT_CLK, DEC_IR_RST, DEC_IR_EN, DEC_IR_Din, DEC_IR_Dout);
 
     DEC_PC_TO_STORE_REG:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 10)
-    PORT MAP(EXT_CLK, HARD_RST, DEC_PC_To_Store_EN, '0', PC_Next(9 DOWNTO 0), DEC_PC_To_Store_Dout);
+    PORT MAP(EXT_CLK, HARD_RST, DEC_PC_To_Store_EN, PC_Next(9 DOWNTO 0), DEC_PC_To_Store_Dout);
 
     -------------------------------------------------------
 
@@ -384,17 +384,17 @@ BEGIN
     EXE_SRC_REG:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, EXE_RST, '1', '0', EXE_Src_Din, EXE_Src);
+    PORT MAP(EXT_CLK, EXE_RST, '1', EXE_Src_Din, EXE_Src);
 
     EXE_DST_REG:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, EXE_RST, '1', '0', EXE_Dst_Din, EXE_Dst);
+    PORT MAP(EXT_CLK, EXE_RST, '1', EXE_Dst_Din, EXE_Dst);
 
     EXE_CTRL_REG:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 11)
-    PORT MAP(EXT_CLK, EXE_RST, '1', '0', EXE_Ctrl_Din, EXE_Ctrl);
+    PORT MAP(EXT_CLK, EXE_RST, '1', EXE_Ctrl_Din, EXE_Ctrl);
 
     -------------------------------------------------------
 
@@ -421,7 +421,7 @@ BEGIN
     FLAG_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 4)
-    PORT MAP(EXT_CLK, HARD_RST, Flags_EN, '0', Flags_Din, Flags_Dout);
+    PORT MAP(EXT_CLK, HARD_RST, Flags_EN, Flags_Din, Flags_Dout);
 
 
     MEM_Src_Din(15 DOWNTO 0)    <= EXE_Res2;
@@ -440,17 +440,17 @@ BEGIN
     MEM_SRC_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', MEM_Src_Din, MEM_Src);
+    PORT MAP(EXT_CLK, HARD_RST, '1', MEM_Src_Din, MEM_Src);
 
     MEM_DST_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', MEM_Dst_Din, MEM_Dst);
+    PORT MAP(EXT_CLK, HARD_RST, '1', MEM_Dst_Din, MEM_Dst);
 
     MEM_CTRL_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 6)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', MEM_Ctrl_Din, MEM_Ctrl);
+    PORT MAP(EXT_CLK, HARD_RST, '1', MEM_Ctrl_Din, MEM_Ctrl);
 
     -------------------------------------------------------
 
@@ -491,17 +491,17 @@ BEGIN
     WRB_SRC_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', WRB_Src_Din, WRB_Src);
+    PORT MAP(EXT_CLK, HARD_RST, '1', WRB_Src_Din, WRB_Src);
 
     WRB_DST_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 20)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', WRB_Dst_Din, WRB_Dst);
+    PORT MAP(EXT_CLK, HARD_RST, '1', WRB_Dst_Din, WRB_Dst);
 
     WRB_CTRL_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 3)
-    PORT MAP(EXT_CLK, HARD_RST, '1', '0', WRB_Ctrl_Din, WRB_Ctrl);
+    PORT MAP(EXT_CLK, HARD_RST, '1', WRB_Ctrl_Din, WRB_Ctrl);
 
     -------------------------------------------------------
 
@@ -521,6 +521,6 @@ BEGIN
     PORT_OUT_REG:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 16)
-    PORT MAP(EXT_CLK, HARD_RST, WRB_Port_Out_WR, '0', WRB_Src_Data, PORT_OUT);
+    PORT MAP(EXT_CLK, HARD_RST, WRB_Port_Out_WR, WRB_Src_Data, PORT_OUT);
 
 END ARCHITECTURE;

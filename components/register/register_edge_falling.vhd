@@ -5,7 +5,6 @@ ENTITY register_edge_falling IS
     GENERIC(n: INTEGER := 16);
     PORT(
         CLK, RST, EN    : IN  STD_LOGIC;
-        RST_VAL         : IN  STD_LOGIC;
         Din             : IN  STD_LOGIC_VECTOR(n-1 DOWNTO 0);
         Dout            : OUT STD_LOGIC_VECTOR(n-1 DOWNTO 0)
     );
@@ -18,7 +17,7 @@ BEGIN
     BEGIN
         IF FALLING_EDGE(CLK) THEN
             IF RST='1' THEN
-                Dout <= (OTHERS => RST_VAL);
+                Dout <= (OTHERS => '0');
             ELSIF EN='1' THEN
                 Dout <= Din;
             END IF;

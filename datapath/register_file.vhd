@@ -86,7 +86,7 @@ BEGIN
         Ri:
         ENTITY work.register_edge_rising
         GENERIC MAP(n => 16)
-        PORT MAP(CLK, RST, Reg_EN(i), '0', Reg_Din(i), Reg_Dout(i));
+        PORT MAP(CLK, RST, Reg_EN(i), Reg_Din(i), Reg_Dout(i));
     END GENERATE;
 
     -- Register PC
@@ -96,7 +96,7 @@ BEGIN
     PC:
     ENTITY work.register_edge_falling
     GENERIC MAP(n => 16)
-    PORT MAP(CLK, RST, PC_WR, '0', Reg_Din(7), Reg_Dout(7));
+    PORT MAP(CLK, RST, PC_WR, Reg_Din(7), Reg_Dout(7));
 
     --===================================================================================
     --
