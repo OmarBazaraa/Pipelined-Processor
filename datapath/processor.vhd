@@ -19,8 +19,14 @@ ARCHITECTURE arch_processor OF processor IS
     --
 
     SIGNAL INTR                 : STD_LOGIC;
-    SIGNAL INTR_ACK             : STD_LOGIC;
+    SIGNAL INTR_Stall           : STD_LOGIC;
+    SIGNAL INTR_EN              : STD_LOGIC;
     SIGNAL INTR_RST             : STD_LOGIC;
+    SIGNAL INTR_CLK             : STD_LOGIC;
+    SIGNAL INTR_ACK             : STD_LOGIC;
+
+    SIGNAL DEC_Addr_Pre_Zero    : STD_LOGIC;
+    SIGNAL EXE_Addr_Pre_Zero    : STD_LOGIC;
 
     SIGNAL Flags_EN             : STD_LOGIC;
     SIGNAL Flags_Din            : STD_LOGIC_VECTOR( 3 DOWNTO 0);
@@ -88,7 +94,6 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL DEC_Mem_WR           : STD_LOGIC;
     SIGNAL DEC_Port_In_RD       : STD_LOGIC;
     SIGNAL DEC_Port_Out_WR      : STD_LOGIC;
-    SIGNAL DEC_MOV              : STD_LOGIC;
     SIGNAL DEC_PC_Flags_Save    : STD_LOGIC;
     SIGNAL DEC_Branch_Taken     : STD_LOGIC;
 
@@ -102,18 +107,21 @@ ARCHITECTURE arch_processor OF processor IS
 
     SIGNAL EXE_Src_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL EXE_Dst_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL EXE_Ctrl_Din         : STD_LOGIC_VECTOR(10 DOWNTO 0);
+    SIGNAL EXE_Ctrl_Din         : STD_LOGIC_VECTOR( 9 DOWNTO 0);
     
     -- To execute stage
     SIGNAL EXE_Src              : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL EXE_Dst              : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL EXE_Ctrl             : STD_LOGIC_VECTOR(10 DOWNTO 0);
+    SIGNAL EXE_Ctrl             : STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
     SIGNAL EXE_Opr              : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL EXE_Res1             : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL EXE_Res2             : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL EXE_Flags            : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL EXE_Flags_EN         : STD_LOGIC;
+
+    SIGNAL EXE_Addr_Switch      : STD_LOGIC;
+    SIGNAL EXE_Mem_WR           : STD_LOGIC;
 
     -------------------------------------------------------
     --
@@ -123,12 +131,12 @@ ARCHITECTURE arch_processor OF processor IS
     -- From execute stage
     SIGNAL MEM_Src_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL MEM_Dst_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL MEM_Ctrl_Din         : STD_LOGIC_VECTOR( 5 DOWNTO 0);
+    SIGNAL MEM_Ctrl_Din         : STD_LOGIC_VECTOR( 4 DOWNTO 0);
     
     -- To memory stage
     SIGNAL MEM_Src              : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL MEM_Dst              : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL MEM_Ctrl             : STD_LOGIC_VECTOR( 5 DOWNTO 0);
+    SIGNAL MEM_Ctrl             : STD_LOGIC_VECTOR( 4 DOWNTO 0);
 
     SIGNAL MEM_Addr             : STD_LOGIC_VECTOR( 9 DOWNTO 0);
     SIGNAL MEM_Addr_Switch      : STD_LOGIC;
@@ -148,12 +156,12 @@ ARCHITECTURE arch_processor OF processor IS
     -- From memory stage
     SIGNAL WRB_Src_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL WRB_Dst_Din          : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL WRB_Ctrl_Din         : STD_LOGIC_VECTOR( 2 DOWNTO 0);
+    SIGNAL WRB_Ctrl_Din         : STD_LOGIC_VECTOR( 1 DOWNTO 0);
     
     -- To write back stage
     SIGNAL WRB_Src              : STD_LOGIC_VECTOR(19 DOWNTO 0);
     SIGNAL WRB_Dst              : STD_LOGIC_VECTOR(19 DOWNTO 0);
-    SIGNAL WRB_Ctrl             : STD_LOGIC_VECTOR( 2 DOWNTO 0);
+    SIGNAL WRB_Ctrl             : STD_LOGIC_VECTOR( 1 DOWNTO 0);
 
     SIGNAL WRB_Src_Data         : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL WRB_Rsrc             : STD_LOGIC_VECTOR( 2 DOWNTO 0);
@@ -163,7 +171,6 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL WRB_Rdst             : STD_LOGIC_VECTOR( 2 DOWNTO 0);
     SIGNAL WRB_Rdst_WB          : STD_LOGIC;
 
-    SIGNAL WRB_MOV              : STD_LOGIC;
     SIGNAL WRB_Port_Out_WR      : STD_LOGIC;
     SIGNAL WRB_Mem_RD           : STD_LOGIC;
 
@@ -171,15 +178,32 @@ BEGIN
 
     --===================================================================================
     --
-    -- Interrupt Circuit
+    -- External ports sync circuit
     --
 
-    INTR_RST    <= HARD_RST OR INTR_ACK;
+    DEC_Addr_Pre_Zero   <=  '1' WHEN EXE_Dst_Din(15 DOWNTO 2)="00000000000000"  ELSE '0';
+    EXE_Addr_Pre_Zero   <=  '1' WHEN EXE_Dst(15 DOWNTO 2)="00000000000000"      ELSE '0';
 
-    -- TODO: Think of better approach. This is so sensitive to glitches
-    INTR_FLIP_FLOP:
+    -- Stall executing interrupt when previous instruction are changing int M[0] or M[1]
+    INTR_Stall  <=  (DEC_Mem_WR AND DEC_Addr_Pre_Zero AND (
+                        (DEC_Mem_Addr_Switch) OR
+                        (NOT DEC_Mem_Addr_Switch AND (EXE_Dst_Din(0) XOR EXE_Dst_Din(1)))
+                    )) OR
+                    (EXE_Mem_WR AND EXE_Addr_Pre_Zero AND (
+                        (EXE_Addr_Switch) OR
+                        (NOT EXE_Addr_Switch AND (EXE_Dst(0) XOR EXE_Dst(1)))
+                    ));
+
+    INTR_RST    <=  HARD_RST OR INTR_ACK;
+    INTR_EN     <=  (NOT INTR_Stall) AND (NOT Stall) AND (NOT Flush);
+
+    INTR_FLIP_FLOP_1:
     ENTITY work.flip_flop
-    PORT MAP(EXT_INTR, INTR_RST, '1', INTR);
+    PORT MAP(EXT_CLK, HARD_RST, INTR_EN, EXT_INTR, INTR_CLK);
+
+    INTR_FLIP_FLOP_2:
+    ENTITY work.flip_flop
+    PORT MAP(INTR_CLK, INTR_RST, '1', '1', INTR);
 
     --===================================================================================
     --
@@ -207,10 +231,10 @@ BEGIN
     GENERIC MAP(n => 10)
     PORT MAP(EXT_CLK, HARD_RST, PC_INTR_EN, MEM_Din(9 DOWNTO 0), PC_INTR_Dout);
 
-    PC_EN       <= NOT Stall;
-    PC_Reset_EN <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000000") ELSE '0';
-    PC_INTR_EN  <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000001") ELSE '0';
-    Instr_Addr  <= PC_Cur(9 DOWNTO 0);
+    PC_EN               <= NOT Stall;
+    PC_Reset_EN         <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000000") ELSE '0';
+    PC_INTR_EN          <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000001") ELSE '0';
+    Instr_Addr          <= PC_Cur(9 DOWNTO 0);
 
     --===================================================================================
     --
@@ -218,10 +242,10 @@ BEGIN
     --
 
     DEC_IR_EN           <= NOT Stall;
-    DEC_IR_RST          <= HARD_RST OR RESET OR (Flush AND (NOT Stall));
+    DEC_IR_RST          <= HARD_RST OR RESET OR Flush;
     DEC_IR_Din          <= Instr WHEN INTR='0' ELSE Instr_INTR;
 
-    DEC_PC_To_Store_EN  <= NOT INTR;
+    DEC_PC_To_Store_EN  <= INTR NOR Stall;
 
     DEC_IR:
     ENTITY work.register_edge_falling
@@ -267,7 +291,6 @@ BEGIN
         Port_In_RD      => DEC_Port_In_RD,
         Port_Out_WR     => DEC_Port_Out_WR,
 
-        MOV             => DEC_MOV,
         PC_Flags_Save   => DEC_PC_Flags_Save,
         Branch_Taken    => DEC_Branch_Taken,
         Intr_Ack        => INTR_ACK
@@ -372,7 +395,7 @@ BEGIN
 
     EXE_Ctrl_Din    <=  DEC_ALU_Opr & DEC_Flags_EN & DEC_Flags_Restore &
                         DEC_Mem_Addr_Switch & DEC_Mem_WR & DEC_Mem_RD &
-                        DEC_Port_Out_WR & DEC_MOV;
+                        DEC_Port_Out_WR;
 
     --===================================================================================
     --
@@ -393,13 +416,16 @@ BEGIN
 
     EXE_CTRL_REG:
     ENTITY work.register_edge_falling
-    GENERIC MAP(n => 11)
+    GENERIC MAP(n => 10)
     PORT MAP(EXT_CLK, EXE_RST, '1', EXE_Ctrl_Din, EXE_Ctrl);
 
     -------------------------------------------------------
 
-    EXE_Opr         <= EXE_Ctrl(10 DOWNTO 7);
-    EXE_Flags_EN    <= EXE_Ctrl(6);
+    EXE_Opr         <= EXE_Ctrl(9 DOWNTO 6);
+    EXE_Flags_EN    <= EXE_Ctrl(5);
+    EXE_Addr_Switch <= EXE_Ctrl(3);
+    EXE_Mem_WR      <= EXE_Ctrl(2);
+
 
     EXE_ALU:
     ENTITY work.ALU
@@ -427,10 +453,10 @@ BEGIN
     MEM_Src_Din(15 DOWNTO 0)    <= EXE_Res2;
     MEM_Src_Din(19 DOWNTO 16)   <= EXE_Src(19 DOWNTO 16);
 
-    MEM_Dst_Din(15 DOWNTO 0)    <= EXE_Res1 WHEN EXE_Ctrl(0)='0' ELSE EXE_Src(15 DOWNTO 0);
+    MEM_Dst_Din(15 DOWNTO 0)    <= EXE_Res1;
     MEM_Dst_Din(19 DOWNTO 16)   <= EXE_Dst(19 DOWNTO 16);
 
-    MEM_Ctrl_Din                <= EXE_Ctrl(5 DOWNTO 0);
+    MEM_Ctrl_Din                <= EXE_Ctrl(4 DOWNTO 0);
 
     --===================================================================================
     --
@@ -449,15 +475,15 @@ BEGIN
 
     MEM_CTRL_REG:
     ENTITY work.register_edge_rising
-    GENERIC MAP(n => 6)
+    GENERIC MAP(n => 5)
     PORT MAP(EXT_CLK, HARD_RST, '1', MEM_Ctrl_Din, MEM_Ctrl);
 
     -------------------------------------------------------
 
-    MEM_RD              <= MEM_Ctrl(2);
-    MEM_WR              <= MEM_Ctrl(3);
-    MEM_Addr_Switch     <= MEM_Ctrl(4);
-    MEM_Flags_Restore   <= MEM_Ctrl(5);
+    MEM_RD              <= MEM_Ctrl(1);
+    MEM_WR              <= MEM_Ctrl(2);
+    MEM_Addr_Switch     <= MEM_Ctrl(3);
+    MEM_Flags_Restore   <= MEM_Ctrl(4);
 
     MEM_Addr            <= MEM_Src(9 DOWNTO 0) WHEN MEM_Addr_Switch='1' ELSE MEM_Dst(9 DOWNTO 0);
     MEM_Din             <= WRB_Src_Data WHEN (WRB_Mem_RD='1' AND WRB_Rsrc=MEM_Src(18 DOWNTO 16)) ELSE MEM_Src(15 DOWNTO 0);
@@ -481,7 +507,7 @@ BEGIN
 
     WRB_Dst_Din                 <= MEM_Dst;
 
-    WRB_Ctrl_Din                <= MEM_Ctrl(2 DOWNTO 0);
+    WRB_Ctrl_Din                <= MEM_Ctrl(1 DOWNTO 0);
 
     --===================================================================================
     --
@@ -500,14 +526,13 @@ BEGIN
 
     WRB_CTRL_REG:
     ENTITY work.register_edge_rising
-    GENERIC MAP(n => 3)
+    GENERIC MAP(n => 2)
     PORT MAP(EXT_CLK, HARD_RST, '1', WRB_Ctrl_Din, WRB_Ctrl);
 
     -------------------------------------------------------
 
-    WRB_MOV         <= WRB_Ctrl(0);
-    WRB_Port_Out_WR <= WRB_Ctrl(1);
-    WRB_Mem_RD      <= WRB_Ctrl(2);
+    WRB_Port_Out_WR <= WRB_Ctrl(0);
+    WRB_Mem_RD      <= WRB_Ctrl(1);
 
     WRB_Src_Data    <= WRB_Src(15 DOWNTO 0);
     WRB_Rsrc        <= WRB_Src(18 DOWNTO 16);

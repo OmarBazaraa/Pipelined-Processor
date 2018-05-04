@@ -32,7 +32,6 @@ ENTITY decode_ciruit IS
         Port_In_RD              : OUT STD_LOGIC;
         Port_Out_WR             : OUT STD_LOGIC;
 
-        MOV                     : OUT STD_LOGIC;
         PC_Flags_Save           : OUT STD_LOGIC;
         Branch_Taken            : OUT STD_LOGIC;
         Intr_Ack                : OUT STD_LOGIC
@@ -50,6 +49,7 @@ ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
 
     SIGNAL MOV_Write            : STD_LOGIC;
     SIGNAL MOV_Instr            : STD_LOGIC;
+    SIGNAL LDM_Instr            : STD_LOGIC;
 
     SIGNAL ALU_Stack            : STD_LOGIC_VECTOR(3 DOWNTO 0);
     SIGNAL ALU_Write            : STD_LOGIC;
@@ -99,8 +99,10 @@ BEGIN
 
     MOV_Write       <= MOV_Type AND Instr(13);
     MOV_Instr       <= MOV_Type AND Instr(12);
-    MOV             <= MOV_Instr;
-    Immediate_Load  <= MOV_Type AND Instr(11);
+
+    LDM_Instr       <= MOV_Type AND Instr(11);
+    Immediate_Load  <= LDM_Instr;
+
     Port_In_RD      <= MOV_Type AND Instr(10);
     Port_Out_WR     <= MOV_Type AND Instr( 9);
 
@@ -111,7 +113,7 @@ BEGIN
 
     ALU_Opr         <= Instr(13 DOWNTO 10) WHEN ALU_Type='1' ELSE ALU_Stack;
 
-    ALU_Stack       <= ("0" & Stack & Stack & Stack_Push);   -- INC / DEC
+    ALU_Stack       <= ("0" & Stack & Stack & (Stack_Push OR MOV_Instr OR LDM_Instr));   -- INC / DEC
     ALU_Write       <= ALU_Type AND (Instr(13) OR Instr(12));
     ALU_MUL         <= '1' WHEN (ALU_Type='1' AND Instr(13 DOWNTO 10)="1000")   ELSE '0';
     ALU_SHF         <= '1' WHEN (ALU_Type='1' AND Instr(13 DOWNTO 11)="111")    ELSE '0';

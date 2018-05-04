@@ -36,7 +36,8 @@ ARCHITECTURE arch_ALU OF ALU IS
     SIGNAL Tmp_FlagN        : STD_LOGIC;
 
     ------------------------------------
-    
+
+    SIGNAL Set_Clr_Res      : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
     SIGNAL Set_Clr_Cout     : STD_LOGIC;
 
     SIGNAL Add_Opr_1        : STD_LOGIC_VECTOR(n-1 DOWNTO 0);
@@ -58,7 +59,7 @@ ARCHITECTURE arch_ALU OF ALU IS
 BEGIN
 
     WITH Opr(3 DOWNTO 2) SELECT
-    Tmp_Res         <=  B                       WHEN "00",
+    Tmp_Res         <=  Set_Clr_Res             WHEN "00",
                         Add_Res(n-1 DOWNTO 0)   WHEN "01",
                         Mul_Log_Res             WHEN "10",
                         Shf_Rot_Res             WHEN OTHERS;
@@ -99,6 +100,7 @@ BEGIN
     -- CLRC        00 10
     -- SETC        00 11
 
+    Set_Clr_Res     <=  A WHEN Opr(1 DOWNTO 0)="01" ELSE B;
     Set_Clr_Cout    <=  Opr(0);
 
     --===================================================================================

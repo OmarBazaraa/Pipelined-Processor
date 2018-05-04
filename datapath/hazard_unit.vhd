@@ -50,15 +50,15 @@ ENTITY hazard_unit IS
 
         EXE_Src                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
         EXE_Dst                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
-        EXE_Ctrl                : IN  STD_LOGIC_VECTOR(10 DOWNTO 0);
+        EXE_Ctrl                : IN  STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
         MEM_Src                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
         MEM_Dst                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
-        MEM_Ctrl                : IN  STD_LOGIC_VECTOR( 5 DOWNTO 0);
+        MEM_Ctrl                : IN  STD_LOGIC_VECTOR( 4 DOWNTO 0);
 
         WRB_Src                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
         WRB_Dst                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
-        WRB_Ctrl                : IN  STD_LOGIC_VECTOR( 2 DOWNTO 0);
+        WRB_Ctrl                : IN  STD_LOGIC_VECTOR( 1 DOWNTO 0);
 
         --
         -- Outputs
@@ -90,8 +90,10 @@ ARCHITECTURE hazard_unit OF hazard_unit IS
 
     SIGNAL Load_Depend          : STD_LOGIC;
     SIGNAL Load_PC              : STD_LOGIC;
+    SIGNAL Load_Use_Stall       : STD_LOGIC;
 
     SIGNAL DEC_PC_WB            : STD_LOGIC;
+    SIGNAL EXE_PC_WB            : STD_LOGIC;
     SIGNAL MEM_PC_WB            : STD_LOGIC;
     SIGNAL WRB_PC_WB            : STD_LOGIC;
 
@@ -102,7 +104,8 @@ BEGIN
     -- SRC Data Forwarding
     --
  
-    Src_Data    <=  PC_Flags                WHEN PC_Flags_Save='1'      ELSE
+    Src_Data    <=  Immediate_Val           WHEN Immediate_Load='1'     ELSE
+                    PC_Flags                WHEN PC_Flags_Save='1'      ELSE
                     Dst_Data_FW             WHEN Mem_Addr_Switch='1'    ELSE
                     Src_Data_FW;
 
@@ -128,7 +131,6 @@ BEGIN
     --
 
     Dst_Data    <=  Eff_Addr                WHEN Mem_EA_Load='1'        ELSE
-                    Immediate_Val           WHEN Immediate_Load='1'     ELSE
                     Port_In_Data            WHEN Port_In_RD='1'         ELSE
                     Shift_Data              WHEN Shift_Load='1'         ELSE
                     Dst_Data_FW;
@@ -168,24 +170,27 @@ BEGIN
     -- Stall Detection unit
     --
 
-    Load_Depend <=  '1' WHEN
-                            (Rsrc_Load='1' AND Rsrc=EXE_Src(18 DOWNTO 16)) OR
-                            (Rdst_Load='1' AND Rdst=EXE_Src(18 DOWNTO 16)) ELSE
-                    '0';
+    Load_Depend     <=  '1' WHEN
+                                (Rsrc_Load='1' AND Rsrc=EXE_Src(18 DOWNTO 16)) OR
+                                (Rdst_Load='1' AND Rdst=EXE_Src(18 DOWNTO 16)) ELSE
+                        '0';
 
-    Stall       <=  EXE_Ctrl(2) AND Load_Depend;
+    Load_Use_Stall  <=  EXE_Ctrl(1) AND Load_Depend;
+
+    Stall           <=  Load_Use_Stall;
 
     --===================================================================================
     --
     -- Flush Detection unit
     --
 
-    DEC_PC_WB   <=  '1' WHEN (Rsrc_WB='1' AND Rsrc="111")                       ELSE '0';
-    MEM_PC_WB   <=  '1' WHEN (MEM_Src(19)='1' AND MEM_Src(18 DOWNTO 16)="111")  ELSE '0';
-    WRB_PC_WB   <=  '1' WHEN (WRB_Src(19)='1' AND WRB_Src(18 DOWNTO 16)="111")  ELSE '0';
+    DEC_PC_WB       <=  '1' WHEN (Rsrc_WB='1' AND Rsrc="111")                       ELSE '0';
+    EXE_PC_WB       <=  '1' WHEN (EXE_Src(19)='1' AND EXE_Src(18 DOWNTO 16)="111")  ELSE '0';
+    MEM_PC_WB       <=  '1' WHEN (MEM_Src(19)='1' AND MEM_Src(18 DOWNTO 16)="111")  ELSE '0';
+    WRB_PC_WB       <=  '1' WHEN (WRB_Src(19)='1' AND WRB_Src(18 DOWNTO 16)="111")  ELSE '0';
 
-    Load_PC     <=  DEC_PC_WB OR MEM_PC_WB OR WRB_PC_WB;
+    Load_PC         <=  DEC_PC_WB OR EXE_PC_WB OR MEM_PC_WB OR WRB_PC_WB;
 
-    Flush       <=  Immediate_Load OR Branch_Taken OR Load_PC;
+    Flush           <=  (Immediate_Load OR Branch_Taken OR Load_PC) AND (NOT  Load_Use_Stall);
 
 END ARCHITECTURE;
