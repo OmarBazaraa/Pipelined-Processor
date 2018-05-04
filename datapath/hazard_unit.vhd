@@ -48,6 +48,8 @@ ENTITY hazard_unit IS
         -- Inputs of forward stages
         --
 
+        DEC_Ctrl                : IN  STD_LOGIC_VECTOR( 9 DOWNTO 0);
+
         EXE_Src                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
         EXE_Dst                 : IN  STD_LOGIC_VECTOR(19 DOWNTO 0);
         EXE_Ctrl                : IN  STD_LOGIC_VECTOR( 9 DOWNTO 0);
@@ -70,7 +72,10 @@ ENTITY hazard_unit IS
         PC_Next                 : OUT STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
         Stall                   : OUT STD_LOGIC;
-        Flush                   : OUT STD_LOGIC
+        Flush                   : OUT STD_LOGIC;
+
+        INTR_Stall              : OUT STD_LOGIC;
+        RESET_Stall             : OUT STD_LOGIC
     );
 END ENTITY;
 
@@ -96,6 +101,20 @@ ARCHITECTURE hazard_unit OF hazard_unit IS
     SIGNAL EXE_PC_WB            : STD_LOGIC;
     SIGNAL MEM_PC_WB            : STD_LOGIC;
     SIGNAL WRB_PC_WB            : STD_LOGIC;
+
+
+
+    SIGNAL DEC_ALU_Dec          : STD_LOGIC;
+    SIGNAL EXE_ALU_Dec          : STD_LOGIC;
+
+    SIGNAL DEC_Addr_Pre_Zero    : STD_LOGIC;
+    SIGNAL EXE_Addr_Pre_Zero    : STD_LOGIC;
+
+    SIGNAL DEC_Addr_Intr        : STD_LOGIC;
+    SIGNAL EXE_Addr_Intr        : STD_LOGIC;
+
+    SIGNAL DEC_Addr_Reset       : STD_LOGIC;
+    SIGNAL EXE_Addr_Reset       : STD_LOGIC;
 
 BEGIN
 
@@ -177,7 +196,7 @@ BEGIN
 
     Load_Use_Stall  <=  EXE_Ctrl(1) AND Load_Depend;
 
-    Stall           <=  Load_Use_Stall;
+    Stall           <=  Load_Use_Stall;   
 
     --===================================================================================
     --
@@ -191,6 +210,67 @@ BEGIN
 
     Load_PC         <=  DEC_PC_WB OR EXE_PC_WB OR MEM_PC_WB OR WRB_PC_WB;
 
-    Flush           <=  (Immediate_Load OR Branch_Taken OR Load_PC) AND (NOT  Load_Use_Stall);
+    Flush           <=  (Immediate_Load OR Branch_Taken OR Load_PC) AND (NOT Load_Use_Stall);
+
+    --===================================================================================
+    --
+    -- Interrupt Stall Detection unit
+    --
+
+    -- Note: Ctrl(9..6)=ALU_Opr
+
+    DEC_ALU_Dec         <=  '1' WHEN DEC_Ctrl(9 DOWNTO 6)="0111" ELSE '0';
+    EXE_ALU_Dec         <=  '1' WHEN EXE_Ctrl(9 DOWNTO 6)="0111" ELSE '0';
+
+    DEC_Addr_Pre_Zero   <=  '1' WHEN Dst_Data(9 DOWNTO 2)="00000000"    ELSE '0';
+    EXE_Addr_Pre_Zero   <=  '1' WHEN EXE_Dst(9 DOWNTO 2)="00000000"     ELSE '0';
+
+
+    -- Stall interrupt when previous instructions are writing in M[1]
+
+    DEC_Addr_Intr       <=  '1' WHEN
+                                    DEC_Addr_Pre_Zero='1' AND
+                                    Dst_Data(1)=DEC_ALU_Dec AND
+                                    Dst_Data(0)=(NOT DEC_ALU_Dec)
+                                ELSE
+                            '0';
+
+    EXE_Addr_Intr       <=  '1' WHEN
+                                    DEC_Addr_Pre_Zero='1' AND
+                                    EXE_Dst(1)=EXE_ALU_Dec AND
+                                    EXE_Dst(0)=(NOT EXE_ALU_Dec)
+                                ELSE
+                            '0';
+
+    -- Note: Ctrl(2)=Mem_WR
+    INTR_Stall          <=  INTR AND (
+                                (DEC_Ctrl(2) AND DEC_Addr_Intr) OR
+                                (EXE_Ctrl(2) AND EXE_Addr_Intr)
+                            );
+
+    --===================================================================================
+    --
+    -- Reset Stall Detection unit
+    --
+
+    -- Stall reset when previous instructions are writing in M[0]
+
+    DEC_Addr_Reset      <=  '1' WHEN    DEC_Addr_Pre_Zero='1' AND
+                                        Dst_Data(1)='0' AND
+                                        Dst_Data(0)=DEC_ALU_Dec
+                                ELSE
+                            '0';
+
+    EXE_Addr_Reset      <=  '1' WHEN    EXE_Addr_Pre_Zero='1' AND
+                                        EXE_Dst(1)='0' AND
+                                        EXE_Dst(0)=EXE_ALU_Dec
+                                ELSE
+                            '0';
+
+    -- Note: Ctrl(2)=Mem_WR
+    RESET_Stall         <=  RESET AND (
+                                (DEC_Ctrl(2) AND DEC_Addr_Reset) OR
+                                (EXE_Ctrl(2) AND EXE_Addr_Reset)
+                            );
 
 END ARCHITECTURE;

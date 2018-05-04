@@ -19,21 +19,20 @@ ARCHITECTURE arch_processor OF processor IS
     --
 
     SIGNAL INTR                 : STD_LOGIC;
-    SIGNAL INTR_Stall           : STD_LOGIC;
     SIGNAL INTR_EN              : STD_LOGIC;
     SIGNAL INTR_RST             : STD_LOGIC;
     SIGNAL INTR_CLK             : STD_LOGIC;
     SIGNAL INTR_ACK             : STD_LOGIC;
+    SIGNAL INTR_Stall           : STD_LOGIC;
 
-    SIGNAL DEC_Addr_Pre_Zero    : STD_LOGIC;
-    SIGNAL EXE_Addr_Pre_Zero    : STD_LOGIC;
+    SIGNAL RESET_Stall          : STD_LOGIC;
+
+    SIGNAL Stall                : STD_LOGIC;
+    SIGNAL Flush                : STD_LOGIC;
 
     SIGNAL Flags_EN             : STD_LOGIC;
     SIGNAL Flags_Din            : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL Flags_Dout           : STD_LOGIC_VECTOR( 3 DOWNTO 0);
-
-    SIGNAL Stall                : STD_LOGIC;
-    SIGNAL Flush                : STD_LOGIC;
 
     -------------------------------------------------------
     --
@@ -120,9 +119,6 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL EXE_Flags            : STD_LOGIC_VECTOR( 3 DOWNTO 0);
     SIGNAL EXE_Flags_EN         : STD_LOGIC;
 
-    SIGNAL EXE_Addr_Switch      : STD_LOGIC;
-    SIGNAL EXE_Mem_WR           : STD_LOGIC;
-
     -------------------------------------------------------
     --
     -- Memory Stage
@@ -181,29 +177,16 @@ BEGIN
     -- External ports sync circuit
     --
 
-    DEC_Addr_Pre_Zero   <=  '1' WHEN EXE_Dst_Din(15 DOWNTO 2)="00000000000000"  ELSE '0';
-    EXE_Addr_Pre_Zero   <=  '1' WHEN EXE_Dst(15 DOWNTO 2)="00000000000000"      ELSE '0';
-
-    -- Stall executing interrupt when previous instruction are changing int M[0] or M[1]
-    INTR_Stall  <=  (DEC_Mem_WR AND DEC_Addr_Pre_Zero AND (
-                        (DEC_Mem_Addr_Switch) OR
-                        (NOT DEC_Mem_Addr_Switch AND (EXE_Dst_Din(0) XOR EXE_Dst_Din(1)))
-                    )) OR
-                    (EXE_Mem_WR AND EXE_Addr_Pre_Zero AND (
-                        (EXE_Addr_Switch) OR
-                        (NOT EXE_Addr_Switch AND (EXE_Dst(0) XOR EXE_Dst(1)))
-                    ));
-
+    INTR_EN     <=  EXT_INTR AND (NOT Stall) AND (NOT Flush);
     INTR_RST    <=  HARD_RST OR INTR_ACK;
-    INTR_EN     <=  (NOT INTR_Stall) AND (NOT Stall) AND (NOT Flush);
 
     INTR_FLIP_FLOP_1:
     ENTITY work.flip_flop
-    PORT MAP(EXT_CLK, HARD_RST, INTR_EN, EXT_INTR, INTR_CLK);
+    PORT MAP(EXT_CLK, HARD_RST, INTR_EN, INTR_CLK);
 
     INTR_FLIP_FLOP_2:
     ENTITY work.flip_flop
-    PORT MAP(INTR_CLK, INTR_RST, '1', '1', INTR);
+    PORT MAP(INTR_CLK, INTR_RST, '1', INTR);
 
     --===================================================================================
     --
@@ -242,10 +225,10 @@ BEGIN
     --
 
     DEC_IR_EN           <= NOT Stall;
-    DEC_IR_RST          <= HARD_RST OR RESET OR Flush;
+    DEC_IR_RST          <= HARD_RST OR RESET OR Flush OR INTR_Stall;
     DEC_IR_Din          <= Instr WHEN INTR='0' ELSE Instr_INTR;
 
-    DEC_PC_To_Store_EN  <= INTR NOR Stall;
+    DEC_PC_To_Store_EN  <= Stall NOR INTR;
 
     DEC_IR:
     ENTITY work.register_edge_falling
@@ -368,6 +351,8 @@ BEGIN
         -- Inputs of forward stages
         --
 
+        DEC_Ctrl        => EXE_Ctrl_Din,
+
         EXE_Src         => EXE_Src,
         EXE_Dst         => EXE_Dst,
         EXE_Ctrl        => EXE_Ctrl,
@@ -390,7 +375,10 @@ BEGIN
         PC_Next         => PC_Next(9 DOWNTO 0),
 
         Stall           => Stall,
-        Flush           => Flush
+        Flush           => Flush,
+
+        INTR_Stall      => INTR_Stall,
+        RESET_Stall     => RESET_Stall
     );
 
     EXE_Ctrl_Din    <=  DEC_ALU_Opr & DEC_Flags_EN & DEC_Flags_Restore &
@@ -423,8 +411,6 @@ BEGIN
 
     EXE_Opr         <= EXE_Ctrl(9 DOWNTO 6);
     EXE_Flags_EN    <= EXE_Ctrl(5);
-    EXE_Addr_Switch <= EXE_Ctrl(3);
-    EXE_Mem_WR      <= EXE_Ctrl(2);
 
 
     EXE_ALU:
