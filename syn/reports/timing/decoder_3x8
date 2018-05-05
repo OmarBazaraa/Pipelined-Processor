@@ -1,0 +1,26 @@
+
+
+
+
+
+                        Critical Path Report
+
+Critical path #1, (unconstrained path)
+NAME                               GATE              ARRIVAL              LOAD
+------------------------------------------------------------------------------
+EN/                                            0.00  0.00 dn             0.02
+ix3/Y                              nor02ii     0.21  0.21 dn             0.02
+ix180/Y                            inv01       0.39  0.60 up             0.07
+ix23/Y                             nor03_2x    0.20  0.80 dn             0.00
+Dout(2)/                                       0.00  0.80 dn             0.00
+data arrival time                                    0.80
+
+data required time                                not specified
+------------------------------------------------------------------------------
+data required time                                not specified
+data arrival time                                    0.80
+                                                  ----------
+                                               unconstrained path
+------------------------------------------------------------------------------
+
+

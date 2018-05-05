@@ -1,0 +1,41 @@
+
+
+
+
+
+                        Critical Path Report
+
+Critical path #1, (unconstrained path)
+NAME                               GATE              ARRIVAL              LOAD
+------------------------------------------------------------------------------
+Subtract/                                      0.00  0.00 up             0.44
+ix31/Y                             xor2        0.47  0.47 dn             0.03
+L0_0_FAi_ix112/Y                   xnor2       0.24  0.71 up             0.04
+L0_0_FAi_ix9/Y                     mux21_ni    0.51  1.22 dn             0.04
+L0_1_FAi_ix9/Y                     mux21_ni    0.42  1.64 dn             0.04
+L0_2_FAi_ix9/Y                     mux21_ni    0.42  2.07 dn             0.04
+L0_3_FAi_ix9/Y                     mux21_ni    0.42  2.49 dn             0.04
+L0_4_FAi_ix9/Y                     mux21_ni    0.42  2.91 dn             0.04
+L0_5_FAi_ix9/Y                     mux21_ni    0.42  3.34 dn             0.04
+L0_6_FAi_ix9/Y                     mux21_ni    0.42  3.76 dn             0.04
+L0_7_FAi_ix9/Y                     mux21_ni    0.42  4.18 dn             0.04
+L0_8_FAi_ix9/Y                     mux21_ni    0.42  4.61 dn             0.04
+L0_9_FAi_ix9/Y                     mux21_ni    0.42  5.03 dn             0.04
+L0_10_FAi_ix9/Y                    mux21_ni    0.42  5.45 dn             0.04
+L0_11_FAi_ix9/Y                    mux21_ni    0.42  5.88 dn             0.04
+L0_12_FAi_ix9/Y                    mux21_ni    0.42  6.30 dn             0.04
+L0_13_FAi_ix9/Y                    mux21_ni    0.42  6.72 dn             0.04
+L0_14_FAi_ix9/Y                    mux21_ni    0.42  7.15 dn             0.04
+L0_15_FAi_ix9/Y                    mux21_ni    0.22  7.37 dn             0.00
+Cout/                                          0.00  7.37 dn             0.00
+data arrival time                                    7.37
+
+data required time                                not specified
+------------------------------------------------------------------------------
+data required time                                not specified
+data arrival time                                    7.37
+                                                  ----------
+                                               unconstrained path
+------------------------------------------------------------------------------
+
+

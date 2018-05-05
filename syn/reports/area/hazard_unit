@@ -1,0 +1,45 @@
+
+*******************************************************
+
+Cell: hazard_unit    View: arch_hazard_unit    Library: work
+
+*******************************************************
+
+
+ Cell       Library  References     Total Area
+
+and02       tsmc035_typ     1 x      1      1 gates
+and04       tsmc035_typ     1 x      2      2 gates
+ao221       tsmc035_typ     1 x      2      2 gates
+ao32        tsmc035_typ     6 x      2     12 gates
+aoi22       tsmc035_typ    80 x      1    118 gates
+aoi221      tsmc035_typ     1 x      2      2 gates
+aoi222      tsmc035_typ    36 x      2     81 gates
+aoi322      tsmc035_typ     8 x      2     20 gates
+aoi33       tsmc035_typ     1 x      2      2 gates
+aoi44       tsmc035_typ     3 x      2      8 gates
+buf02       tsmc035_typ     8 x      1      8 gates
+inv01       tsmc035_typ    39 x      1     30 gates
+inv02       tsmc035_typ    30 x      1     23 gates
+inv04       tsmc035_typ     2 x      1      2 gates
+nand02      tsmc035_typ    58 x      1     58 gates
+nand03      tsmc035_typ     5 x      1      6 gates
+nand04      tsmc035_typ    18 x      1     27 gates
+nor02_2x    tsmc035_typ     8 x      1      8 gates
+nor02ii     tsmc035_typ    14 x      1     17 gates
+nor03_2x    tsmc035_typ     6 x      1      7 gates
+nor04       tsmc035_typ     2 x      1      3 gates
+oai221      tsmc035_typ     2 x      2      4 gates
+or02        tsmc035_typ     5 x      1      6 gates
+or03        tsmc035_typ     4 x      2      6 gates
+xnor2       tsmc035_typ    33 x      2     63 gates
+xor2        tsmc035_typ     2 x      2      4 gates
+
+ Number of ports :                     342
+ Number of nets :                      620
+ Number of instances :                 374
+ Number of references to this view :     0
+
+Total accumulated area : 
+ Number of gates :                     521
+ Number of accumulated instances :     374

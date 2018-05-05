@@ -1,0 +1,180 @@
+set_working_dir /home/ayman/Desktop/Pipelined-Processor
+load_library tsmc035_typ
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/full_adder.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.full_adder.arch_full_adder -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.full_adder.arch_full_adder 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/full_adder -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/full_adder -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog full_adder.v
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/adder_subtractor.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.adder_subtractor.arch_adder_subtractor -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.adder_subtractor.arch_adder_subtractor 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/adder_subtractor -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/adder_subtractor -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog adder_subtractor.v
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/tri_state_buffer.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.tri_state_buffer.arch_tri_state_buffer -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.tri_state_buffer.arch_tri_state_buffer 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/tri_state_buffer -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/tri_state_buffer -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog tri_state_buffer.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/decoder_2x4.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.decoder_2x4.arch_decoder_2x4 -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.decoder_2x4.arch_decoder_2x4 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/decoder_2x4 -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/decoder_2x4 -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog decoder_2x4.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/decoder_3x8.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.decoder_3x8.arch_decoder_3x8 -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.decoder_3x8.arch_decoder_3x8 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/decoder_3x8 -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/decoder_3x8 -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog decoder_3x8.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/RAM.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/RAM -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/RAM -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog RAM.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/mux_2x1.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.mux_2x1.arch_mux_2x1 -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.mux_2x1.arch_mux_2x1 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/mux_2x1 -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/mux_2x1 -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog mux_2x1.v
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/mux_4x1.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.mux_4x1.arch_mux_4x1 -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.mux_4x1.arch_mux_4x1 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/mux_4x1 -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/mux_4x1 -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog mux_4x1.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/flip_flop.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.flip_flop.arch_flip_flop -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.flip_flop.arch_flip_flop 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/flip_flop -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/flip_flop -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog flip_flop.v
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/register_edge_falling.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.register_edge_falling.arch_register_edge_falling -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.register_edge_falling.arch_register_edge_falling 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/register_edge_falling -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/register_edge_falling -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog register_edge_falling.v
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/register_edge_rising.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.register_edge_rising.arch_register_edge_rising -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.register_edge_rising.arch_register_edge_rising 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/register_edge_rising -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/register_edge_rising -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog register_edge_rising.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/register_level.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.register_level.arch_register_level -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.register_level.arch_register_level 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/register_level -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/register_level -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog register_level.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/ALU.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.ALU.arch_ALU -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.ALU.arch_ALU 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/ALU -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/ALU -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog ALU.v
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/decode_circuit.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.decode_circuit.arch_decode_circuit -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.decode_circuit.arch_decode_circuit 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/decode_circuit -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/decode_circuit -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog decode_circuit.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/hazard_unit.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.hazard_unit.arch_hazard_unit -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.hazard_unit.arch_hazard_unit 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/hazard_unit -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/hazard_unit -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog hazard_unit.v
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/register_file.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.register_file.arch_register_file -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.register_file.arch_register_file 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/register_file -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/register_file -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog register_file.v
+
+
+read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/processor.vhd }
+pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
+pre_optimize -extract 
+optimize .work.processor.arch_processor -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.processor.arch_processor 
+report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/processor -cell_usage -all_leafs 
+report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/processor -num_paths 1 -critical_paths -clock_frequency
+set novendor_constraint_file FALSE
+auto_write -format Verilog processor.v
+

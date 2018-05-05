@@ -1,0 +1,23 @@
+
+*******************************************************
+
+Cell: register_level    View: arch_register_level    Library: work
+
+*******************************************************
+
+
+ Cell     Library  References     Total Area
+
+and02     tsmc035_typ     1 x      1      1 gates
+inv01     tsmc035_typ    17 x      1     13 gates
+inv02     tsmc035_typ     3 x      1      2 gates
+latchr    tsmc035_typ    16 x      3     43 gates
+
+ Number of ports :                      35
+ Number of nets :                       56
+ Number of instances :                  37
+ Number of references to this view :     0
+
+Total accumulated area : 
+ Number of gates :                      60
+ Number of accumulated instances :      37

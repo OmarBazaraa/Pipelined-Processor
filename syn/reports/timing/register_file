@@ -1,0 +1,30 @@
+
+
+
+
+
+                        Critical Path Report
+
+Critical path #1, (unconstrained path)
+NAME                                     GATE              ARRIVAL              LOAD
+------------------------------------------------------------------------------------
+Reg_A_WR/                                            0.00  0.00 up             0.02
+DEC_A_IN_ix3/Y                           nor02ii     0.34  0.34 up             0.03
+DEC_A_IN_ix180/Y                         inv01       0.11  0.45 dn             0.01
+DEC_A_IN_ix11/Y                          or03        0.40  0.85 dn             0.01
+ix1363/Y                                 inv02       0.18  1.03 up             0.05
+ix1411/Y                                 inv02       0.27  1.30 dn             0.12
+ix879/Y                                  mux21_ni    0.35  1.65 up             0.00
+L1_0_Ri/Din(13)                          GENERIC_BLACK_BOX  0.00  1.65 up             0.00
+data arrival time                                          1.65
+
+
+data required time                                      not specified
+------------------------------------------------------------------------------------
+data required time                                      not specified
+data arrival time                                          1.65
+                                                        ----------
+                                                     unconstrained path
+------------------------------------------------------------------------------------
+
+

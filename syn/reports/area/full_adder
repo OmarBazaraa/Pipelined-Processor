@@ -1,0 +1,21 @@
+
+*******************************************************
+
+Cell: full_adder    View: arch_full_adder    Library: work
+
+*******************************************************
+
+
+ Cell       Library  References     Total Area
+
+mux21_ni    tsmc035_typ     1 x      2      2 gates
+xnor2       tsmc035_typ     2 x      2      4 gates
+
+ Number of ports :                       5
+ Number of nets :                        6
+ Number of instances :                   3
+ Number of references to this view :     0
+
+Total accumulated area : 
+ Number of gates :                       6
+ Number of accumulated instances :       3

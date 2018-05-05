@@ -1,0 +1,51 @@
+
+*******************************************************
+
+Cell: ALU    View: arch_ALU    Library: work
+
+*******************************************************
+
+
+ Cell                  Library  References     Total Area
+
+adder_subtractor_16    work            1 x      1      1 adder_subtractor_16
+and02                  tsmc035_typ     6 x      1      8 gates
+and03                  tsmc035_typ     2 x      2      3 gates
+and04                  tsmc035_typ     2 x      2      3 gates
+ao32                   tsmc035_typ     7 x      2     14 gates
+aoi21                  tsmc035_typ    15 x      1     19 gates
+aoi22                  tsmc035_typ    16 x      1     24 gates
+aoi221                 tsmc035_typ     7 x      2     14 gates
+aoi222                 tsmc035_typ    40 x      2     90 gates
+aoi32                  tsmc035_typ     2 x      2      3 gates
+aoi322                 tsmc035_typ     2 x      2      5 gates
+aoi44                  tsmc035_typ     1 x      2      2 gates
+buf02                  tsmc035_typ     7 x      1      7 gates
+fake_gnd               tsmc035_typ     1 x      1      1 fake_gnd
+inv01                  tsmc035_typ    78 x      1     59 gates
+inv02                  tsmc035_typ    42 x      1     32 gates
+mux21                  tsmc035_typ    14 x      2     26 gates
+mux21_ni               tsmc035_typ   254 x      2    460 gates
+nand02                 tsmc035_typ   236 x      1    236 gates
+nand03                 tsmc035_typ    16 x      1     20 gates
+nand04                 tsmc035_typ    26 x      1     38 gates
+nor02_2x               tsmc035_typ     6 x      1      6 gates
+nor02ii                tsmc035_typ    39 x      1     48 gates
+nor03_2x               tsmc035_typ     2 x      1      2 gates
+nor04                  tsmc035_typ     5 x      1      7 gates
+oai21                  tsmc035_typ    33 x      1     41 gates
+oai22                  tsmc035_typ    14 x      1     21 gates
+oai33                  tsmc035_typ     2 x      2      4 gates
+or02                   tsmc035_typ     1 x      1      1 gates
+xnor2                  tsmc035_typ   450 x      2    860 gates
+
+ Number of ports :                      73
+ Number of nets :                     1380
+ Number of instances :                1327
+ Number of references to this view :     0
+
+Total accumulated area : 
+ Black Box adder_subtractor_16 :         1
+ Number of fake_gnd :                    1
+ Number of gates :                    2053
+ Number of accumulated instances :    1327

@@ -1,0 +1,22 @@
+
+*******************************************************
+
+Cell: decoder_2x4    View: arch_decoder_2x4    Library: work
+
+*******************************************************
+
+
+ Cell       Library  References     Total Area
+
+and03       tsmc035_typ     2 x      2      3 gates
+inv01       tsmc035_typ     2 x      1      2 gates
+nor03_2x    tsmc035_typ     2 x      1      2 gates
+
+ Number of ports :                       7
+ Number of nets :                        9
+ Number of instances :                   6
+ Number of references to this view :     0
+
+Total accumulated area : 
+ Number of gates :                       7
+ Number of accumulated instances :       6

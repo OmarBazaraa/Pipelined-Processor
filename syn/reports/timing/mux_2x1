@@ -1,0 +1,24 @@
+
+
+
+
+
+                        Critical Path Report
+
+Critical path #1, (unconstrained path)
+NAME                               GATE              ARRIVAL              LOAD
+------------------------------------------------------------------------------
+S/                                             0.00  0.00 up             0.27
+ix119/Y                            mux21_ni    0.28  0.28 dn             0.00
+Dout(14)/                                      0.00  0.28 dn             0.00
+data arrival time                                    0.28
+
+data required time                                not specified
+------------------------------------------------------------------------------
+data required time                                not specified
+data arrival time                                    0.28
+                                                  ----------
+                                               unconstrained path
+------------------------------------------------------------------------------
+
+
