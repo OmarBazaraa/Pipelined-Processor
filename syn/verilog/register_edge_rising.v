@@ -1,6 +1,6 @@
 //
 // Verilog description for cell register_edge_rising, 
-// Sat May  5 04:03:33 2018
+// Sat May  5 07:41:04 2018
 //
 // LeonardoSpectrum Level 3, 2017a.2 
 //
