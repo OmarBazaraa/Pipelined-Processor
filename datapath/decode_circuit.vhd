@@ -1,7 +1,7 @@
 LIBRARY IEEE;
 USE IEEE.STD_LOGIC_1164.ALL;
 
-ENTITY decode_ciruit IS
+ENTITY decode_circuit IS
     PORT(
         Instr                   : IN  STD_LOGIC_VECTOR(15 DOWNTO 0);
         Flags                   : IN  STD_LOGIC_VECTOR( 3 DOWNTO 0);
@@ -38,7 +38,7 @@ ENTITY decode_ciruit IS
     );
 END ENTITY;
 
-ARCHITECTURE arch_decode_ciruit OF decode_ciruit IS
+ARCHITECTURE arch_decode_circuit OF decode_circuit IS
 
     SIGNAL Instr_Type           : STD_LOGIC_VECTOR(1 DOWNTO 0);
 

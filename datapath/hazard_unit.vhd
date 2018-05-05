@@ -79,7 +79,7 @@ ENTITY hazard_unit IS
     );
 END ENTITY;
 
-ARCHITECTURE hazard_unit OF hazard_unit IS
+ARCHITECTURE arch_hazard_unit OF hazard_unit IS
 
     SIGNAL PC_Flags             : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL PC_Plus_1            : STD_LOGIC_VECTOR( 9 DOWNTO 0);
