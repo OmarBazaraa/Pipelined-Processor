@@ -55,6 +55,7 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL Instr                : STD_LOGIC_VECTOR(15 DOWNTO 0);
     SIGNAL Instr_INTR           : STD_LOGIC_VECTOR(15 DOWNTO 0) := "1100010011110000";
 
+    SIGNAL ZERO_VECTOR          : STD_LOGIC_VECTOR(15 DOWNTO 0);
     -------------------------------------------------------
     --
     -- Decode Stage
@@ -193,6 +194,8 @@ BEGIN
     -- Fetch Stage
     --
 
+    ZERO_VECTOR <= (others => '0');
+
     PROG_MEM:
     ENTITY work.RAM
     GENERIC MAP(n => 16, m => 10)
@@ -200,7 +203,7 @@ BEGIN
         CLK             => EXT_CLK,
         WR              => '0',
         Address         => Instr_Addr,
-        Din             => (OTHERS => '0'),
+        Din             => ZERO_VECTOR,
         Dout            => Instr
     );
 
@@ -243,7 +246,7 @@ BEGIN
     -------------------------------------------------------
 
     DEC_CIRCUIT:
-    ENTITY work.decode_ciruit
+    ENTITY work.decode_circuit
     PORT MAP(
         Instr           => DEC_IR_Dout,
         Flags           => Flags_Dout,

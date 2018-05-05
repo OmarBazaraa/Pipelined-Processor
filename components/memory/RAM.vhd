@@ -26,8 +26,10 @@ BEGIN
     
     PROCESS(CLK)
     BEGIN
-        IF WR='1' AND RISING_EDGE(CLK) THEN
-            Mem(TO_INTEGER(UNSIGNED(Address))) <= Din;
+        IF RISING_EDGE(CLK) THEN
+            IF WR='1' THEN
+                Mem(TO_INTEGER(UNSIGNED(Address))) <= Din;
+            END IF;
         END IF;
     END PROCESS;
 END ARCHITECTURE;
