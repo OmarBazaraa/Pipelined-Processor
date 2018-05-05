@@ -57,6 +57,8 @@ auto_write -format Verilog decoder_3x8.v
 read -technology "tsmc035_typ"  { /home/ayman/Desktop/Pipelined-Processor/vhd/RAM.vhd }
 pre_optimize -common_logic -unused_logic -boundary -xor_comparator_optimize 
 pre_optimize -extract 
+optimize .work.RAM.arch_RAM -target tsmc035_typ -macro -area -effort quick -hierarchy auto 
+optimize_timing .work.RAM.arch_RAM 
 report_area /home/ayman/Desktop/Pipelined-Processor/syn/reports/area/RAM -cell_usage -all_leafs 
 report_delay /home/ayman/Desktop/Pipelined-Processor/syn/reports/timing/RAM -num_paths 1 -critical_paths -clock_frequency
 set novendor_constraint_file FALSE
