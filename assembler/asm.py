@@ -120,7 +120,7 @@ class Assembler(object):
         with open(self.path) as fp:
             line = fp.readline()
             while line:
-                if len(line.strip()) != 0 and line.strip()[0] != "#" and line.strip()[:2] != "//":
+                if len(line.strip()) != 0 and line.strip()[0] != ";" and line.strip()[0] != "#" and line.strip()[:2] != "//":
                     self.file_lines.append(line.strip().lower())
                 line = fp.readline()
 

@@ -21,6 +21,9 @@ sim:/processor/Stall \
 sim:/processor/Flush \
 sim:/processor/PC_Cur \
 sim:/processor/PC_Next \
+sim:/processor/Flags_EN \
+sim:/processor/Flags_Din \
+sim:/processor/Flags_Dout \
 sim:/processor/DEC_PC_To_Store_Dout \
 sim:/processor/DEC_IR_Dout \
 sim:/processor/DEC_Rsrc \
@@ -71,81 +74,78 @@ sim:/processor/WRB_Dst_Data \
 sim:/processor/WRB_Rdst \
 sim:/processor/WRB_Rdst_WB \
 sim:/processor/WRB_Port_Out_WR \
-sim:/processor/WRB_Mem_RD \
-sim:/processor/Flags_EN \
-sim:/processor/Flags_Din \
-sim:/processor/Flags_Dout
+sim:/processor/WRB_Mem_RD
 
 #
 # Hazard Unit Signals
 #
-add wave -position insertpoint  \
-sim:/processor/HAZARD_UNIT/RESET \
-sim:/processor/HAZARD_UNIT/INTR \
-sim:/processor/HAZARD_UNIT/Rsrc \
-sim:/processor/HAZARD_UNIT/Rsrc_WB \
-sim:/processor/HAZARD_UNIT/Rsrc_Load \
-sim:/processor/HAZARD_UNIT/Rsrc_Data \
-sim:/processor/HAZARD_UNIT/Rdst \
-sim:/processor/HAZARD_UNIT/Rdst_WB \
-sim:/processor/HAZARD_UNIT/Rdst_Load \
-sim:/processor/HAZARD_UNIT/Rdst_Data \
-sim:/processor/HAZARD_UNIT/Immediate_Load \
-sim:/processor/HAZARD_UNIT/Immediate_Val \
-sim:/processor/HAZARD_UNIT/Shift_Load \
-sim:/processor/HAZARD_UNIT/Shift_Val \
-sim:/processor/HAZARD_UNIT/PC_Flags_Save \
-sim:/processor/HAZARD_UNIT/PC_Fetching \
-sim:/processor/HAZARD_UNIT/PC_To_Store \
-sim:/processor/HAZARD_UNIT/PC_Reset \
-sim:/processor/HAZARD_UNIT/PC_INTR \
-sim:/processor/HAZARD_UNIT/Flags \
-sim:/processor/HAZARD_UNIT/Mem_Addr_Switch \
-sim:/processor/HAZARD_UNIT/Mem_EA_Load \
-sim:/processor/HAZARD_UNIT/Mem_EA \
-sim:/processor/HAZARD_UNIT/Port_In_RD \
-sim:/processor/HAZARD_UNIT/Port_In_Data \
-sim:/processor/HAZARD_UNIT/Branch_Taken \
-sim:/processor/HAZARD_UNIT/DEC_Ctrl \
-sim:/processor/HAZARD_UNIT/EXE_Src \
-sim:/processor/HAZARD_UNIT/EXE_Dst \
-sim:/processor/HAZARD_UNIT/EXE_Ctrl \
-sim:/processor/HAZARD_UNIT/MEM_Src \
-sim:/processor/HAZARD_UNIT/MEM_Dst \
-sim:/processor/HAZARD_UNIT/MEM_Ctrl \
-sim:/processor/HAZARD_UNIT/WRB_Src \
-sim:/processor/HAZARD_UNIT/WRB_Dst \
-sim:/processor/HAZARD_UNIT/WRB_Ctrl \
-sim:/processor/HAZARD_UNIT/Src_Dout \
-sim:/processor/HAZARD_UNIT/Dst_Dout \
-sim:/processor/HAZARD_UNIT/PC_Next \
-sim:/processor/HAZARD_UNIT/Stall \
-sim:/processor/HAZARD_UNIT/Flush \
-sim:/processor/HAZARD_UNIT/INTR_Stall \
-sim:/processor/HAZARD_UNIT/RESET_Stall \
-sim:/processor/HAZARD_UNIT/PC_Flags \
-sim:/processor/HAZARD_UNIT/PC_Plus_1 \
-sim:/processor/HAZARD_UNIT/Eff_Addr \
-sim:/processor/HAZARD_UNIT/Shift_Data \
-sim:/processor/HAZARD_UNIT/Src_Data \
-sim:/processor/HAZARD_UNIT/Src_Data_FW \
-sim:/processor/HAZARD_UNIT/Dst_Data \
-sim:/processor/HAZARD_UNIT/Dst_Data_FW \
-sim:/processor/HAZARD_UNIT/Load_Depend \
-sim:/processor/HAZARD_UNIT/Load_PC \
-sim:/processor/HAZARD_UNIT/Load_Use_Stall \
-sim:/processor/HAZARD_UNIT/DEC_PC_WB \
-sim:/processor/HAZARD_UNIT/EXE_PC_WB \
-sim:/processor/HAZARD_UNIT/MEM_PC_WB \
-sim:/processor/HAZARD_UNIT/WRB_PC_WB \
-sim:/processor/HAZARD_UNIT/DEC_ALU_Dec \
-sim:/processor/HAZARD_UNIT/EXE_ALU_Dec \
-sim:/processor/HAZARD_UNIT/DEC_Addr_Pre_Zero \
-sim:/processor/HAZARD_UNIT/EXE_Addr_Pre_Zero \
-sim:/processor/HAZARD_UNIT/DEC_Addr_Intr \
-sim:/processor/HAZARD_UNIT/EXE_Addr_Intr \
-sim:/processor/HAZARD_UNIT/DEC_Addr_Reset \
-sim:/processor/HAZARD_UNIT/EXE_Addr_Reset
+# add wave -position insertpoint  \
+# sim:/processor/HAZARD_UNIT/RESET \
+# sim:/processor/HAZARD_UNIT/INTR \
+# sim:/processor/HAZARD_UNIT/Rsrc \
+# sim:/processor/HAZARD_UNIT/Rsrc_WB \
+# sim:/processor/HAZARD_UNIT/Rsrc_Load \
+# sim:/processor/HAZARD_UNIT/Rsrc_Data \
+# sim:/processor/HAZARD_UNIT/Rdst \
+# sim:/processor/HAZARD_UNIT/Rdst_WB \
+# sim:/processor/HAZARD_UNIT/Rdst_Load \
+# sim:/processor/HAZARD_UNIT/Rdst_Data \
+# sim:/processor/HAZARD_UNIT/Immediate_Load \
+# sim:/processor/HAZARD_UNIT/Immediate_Val \
+# sim:/processor/HAZARD_UNIT/Shift_Load \
+# sim:/processor/HAZARD_UNIT/Shift_Val \
+# sim:/processor/HAZARD_UNIT/PC_Flags_Save \
+# sim:/processor/HAZARD_UNIT/PC_Fetching \
+# sim:/processor/HAZARD_UNIT/PC_To_Store \
+# sim:/processor/HAZARD_UNIT/PC_Reset \
+# sim:/processor/HAZARD_UNIT/PC_INTR \
+# sim:/processor/HAZARD_UNIT/Flags \
+# sim:/processor/HAZARD_UNIT/Mem_Addr_Switch \
+# sim:/processor/HAZARD_UNIT/Mem_EA_Load \
+# sim:/processor/HAZARD_UNIT/Mem_EA \
+# sim:/processor/HAZARD_UNIT/Port_In_RD \
+# sim:/processor/HAZARD_UNIT/Port_In_Data \
+# sim:/processor/HAZARD_UNIT/Branch_Taken \
+# sim:/processor/HAZARD_UNIT/DEC_Ctrl \
+# sim:/processor/HAZARD_UNIT/EXE_Src \
+# sim:/processor/HAZARD_UNIT/EXE_Dst \
+# sim:/processor/HAZARD_UNIT/EXE_Ctrl \
+# sim:/processor/HAZARD_UNIT/MEM_Src \
+# sim:/processor/HAZARD_UNIT/MEM_Dst \
+# sim:/processor/HAZARD_UNIT/MEM_Ctrl \
+# sim:/processor/HAZARD_UNIT/WRB_Src \
+# sim:/processor/HAZARD_UNIT/WRB_Dst \
+# sim:/processor/HAZARD_UNIT/WRB_Ctrl \
+# sim:/processor/HAZARD_UNIT/Src_Dout \
+# sim:/processor/HAZARD_UNIT/Dst_Dout \
+# sim:/processor/HAZARD_UNIT/PC_Next \
+# sim:/processor/HAZARD_UNIT/Stall \
+# sim:/processor/HAZARD_UNIT/Flush \
+# sim:/processor/HAZARD_UNIT/INTR_Stall \
+# sim:/processor/HAZARD_UNIT/RESET_Stall \
+# sim:/processor/HAZARD_UNIT/PC_Flags \
+# sim:/processor/HAZARD_UNIT/PC_Plus_1 \
+# sim:/processor/HAZARD_UNIT/Eff_Addr \
+# sim:/processor/HAZARD_UNIT/Shift_Data \
+# sim:/processor/HAZARD_UNIT/Src_Data \
+# sim:/processor/HAZARD_UNIT/Src_Data_FW \
+# sim:/processor/HAZARD_UNIT/Dst_Data \
+# sim:/processor/HAZARD_UNIT/Dst_Data_FW \
+# sim:/processor/HAZARD_UNIT/Load_Depend \
+# sim:/processor/HAZARD_UNIT/Load_PC \
+# sim:/processor/HAZARD_UNIT/Load_Use_Stall \
+# sim:/processor/HAZARD_UNIT/DEC_PC_WB \
+# sim:/processor/HAZARD_UNIT/EXE_PC_WB \
+# sim:/processor/HAZARD_UNIT/MEM_PC_WB \
+# sim:/processor/HAZARD_UNIT/WRB_PC_WB \
+# sim:/processor/HAZARD_UNIT/DEC_ALU_Dec \
+# sim:/processor/HAZARD_UNIT/EXE_ALU_Dec \
+# sim:/processor/HAZARD_UNIT/DEC_Addr_Pre_Zero \
+# sim:/processor/HAZARD_UNIT/EXE_Addr_Pre_Zero \
+# sim:/processor/HAZARD_UNIT/DEC_Addr_Intr \
+# sim:/processor/HAZARD_UNIT/EXE_Addr_Intr \
+# sim:/processor/HAZARD_UNIT/DEC_Addr_Reset \
+# sim:/processor/HAZARD_UNIT/EXE_Addr_Reset
 
 #
 # Decoding Unit Signals
