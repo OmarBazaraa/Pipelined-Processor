@@ -4,6 +4,7 @@ import argparse
 NUMBER_OF_BITS = 16
 INTERRUPT_ADDRESS = 1
 
+
 class Assembler(object):
     ZERO_OPERAND_INST = 0
     ONE_OPERAND_INST = 1
@@ -125,22 +126,16 @@ class Assembler(object):
             while line:
                 if len(line.strip()) != 0 and line.strip()[0] != "#" and line.strip()[:2] != "//":
                     line = line.strip().lower()
-
-                    if isr_address_line and line.split(" ")[0] == ".isr":
-                        isr_address = int(line.split(" ")[1])
-                        self.binary_code[INTERRUPT_ADDRESS] = ('0' * (NUMBER_OF_BITS - len(bin(isr_address)[2:]))) + bin(isr_address)[2:]
-                        isr_address_line = False
-
-                    else:
-                        self.file_lines.append(line)
-
+                    self.file_lines.append(line)
                 line = fp.readline()
 
     # Get the data variables.
     def __parse_data_seg(self):
+        current_line = -1
         data_seg = False
 
         for line in self.file_lines:
+            current_line += 1
             line_words = line.split(" ", 1)
 
             if line_words[0] == ".data":
@@ -148,6 +143,11 @@ class Assembler(object):
                 if len(line_words) > 1:
                     self.current_data_mem_location = max(int(line_words[1]), 0)
                 continue
+            elif line_words[0] == ".code":
+                self.code_seg_start_line = current_line
+                data_seg = False
+                break
+
             if not data_seg:
                 continue
 
@@ -201,7 +201,6 @@ class Assembler(object):
                 else:
                     f.write(" " * (4 - len(str(size))) + str(size) + ": " + ('0' * NUMBER_OF_BITS) + '\n')
                     size += 1
-
 
     def __save_data(self):
         with open(self.data_output_path, "w") as f:

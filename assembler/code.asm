@@ -1,6 +1,17 @@
-.ISR 265
+.DATA
+16
+256
+1
+2
+3
+4
+5
+6
 
-.CODE 200
+// ".code x" or ".x" or ".code" are allowed.
+// .data before or after .code is allowed.
+
+.CODE
 LDD R1, 2
 STD R1, 1
 LDD R3, 3
@@ -32,12 +43,4 @@ LDM R2,5
 sub R1,R2
 RTI
 
-.DATA 100
-16
-256
-1
-2
-3
-4
-5
-6
+
