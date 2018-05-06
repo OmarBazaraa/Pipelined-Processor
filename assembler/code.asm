@@ -1,4 +1,6 @@
-.CODE
+.ISR 265
+
+.CODE 200
 LDD R1, 2
 STD R1, 1
 LDD R3, 3
@@ -16,7 +18,26 @@ INC R0
 INC R0
 RTI
 
-.DATA
-// Address Data (decimal)
-2 15
-3 10
+.100
+SETC
+LDM R1,5
+LDM R2,5
+sub R1,R2
+RTI
+
+
+.120
+LDM R1,5
+LDM R2,5
+sub R1,R2
+RTI
+
+.DATA 100
+16
+256
+1
+2
+3
+4
+5
+6
