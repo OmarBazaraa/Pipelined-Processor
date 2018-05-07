@@ -37,6 +37,7 @@ class Assembler(object):
 
     # Get the instruction information (Type, number of operands, size in RAM file, etc)
     def __get_instruction_info(self, line):
+        line = line.split("#", 1)[0]
         # Return instruction info and operands count
         words = line.split(" ", 1)
         # Remove all spaces.
