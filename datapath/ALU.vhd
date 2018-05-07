@@ -21,12 +21,21 @@ ENTITY ALU IS
 END ENTITY;
 
 ARCHITECTURE arch_ALU OF ALU IS
+
+    SIGNAL Sign_A           : STD_LOGIC;
+    SIGNAL Sign_B           : STD_LOGIC;
+    SIGNAL Same_Sign        : STD_LOGIC;
+
+    SIGNAL Is_Add_Sub       : STD_LOGIC;
+    SIGNAL Is_Mul           : STD_LOGIC;
+
+    ------------------------------------
     
     SIGNAL FlagZ            : STD_LOGIC;
     SIGNAL FlagN            : STD_LOGIC;
     SIGNAL FlagC            : STD_LOGIC;
     SIGNAL FlagV            : STD_LOGIC;
-
+    
     SIGNAL Mul_Res          : STD_LOGIC_VECTOR(n+n-1 DOWNTO 0);
     SIGNAL Mul_FlagZ        : STD_LOGIC;
     SIGNAL Mul_FlagN        : STD_LOGIC;
@@ -58,16 +67,22 @@ ARCHITECTURE arch_ALU OF ALU IS
 
 BEGIN
 
-    WITH Opr(3 DOWNTO 2) SELECT
-    Tmp_Res         <=  Set_Clr_Res             WHEN "00",
-                        Add_Res(n-1 DOWNTO 0)   WHEN "01",
-                        Mul_Log_Res             WHEN "10",
-                        Shf_Rot_Res             WHEN OTHERS;
+    --===================================================================================
+    --
+    -- General Flags and Signals
+    --
 
-    Tmp_FlagZ       <=  '1' WHEN Tmp_Res=(  n-1 DOWNTO 0 => '0') ELSE '0';
-    Tmp_FlagN       <=  Tmp_Res(n-1);
+    Is_Add_Sub      <=  '1' WHEN Opr(3 DOWNTO 2)="01" ELSE '0';
+    Is_Mul          <=  '1' WHEN Opr="1000" ELSE '0';
 
-    ------------------------------------
+    Sign_A          <=  A(n-1) XOR (Is_Add_Sub AND Add_Subtract);
+    Sign_B          <=  B(n-1);
+    Same_Sign       <=  Sign_A XNOR Sign_B;
+
+    --===================================================================================
+    --
+    -- Output Results and Flags
+    --
 
     Mul_Res         <=  A * B;
     Mul_FlagZ       <=  '1' WHEN Mul_Res=(n+n-1 DOWNTO 0 => '0') ELSE '0';
@@ -75,13 +90,26 @@ BEGIN
 
     ------------------------------------
 
+    WITH Opr(3 DOWNTO 2) SELECT
+    Tmp_Res         <=  Set_Clr_Res             WHEN "00",
+                        Add_Res(n-1 DOWNTO 0)   WHEN "01",
+                        Mul_Log_Res             WHEN "10",
+                        Shf_Rot_Res             WHEN OTHERS;
+
+    Tmp_FlagZ       <=  '1' WHEN Tmp_Res=(n-1 DOWNTO 0 => '0') ELSE '0';
+    Tmp_FlagN       <=  Tmp_Res(n-1);
+
+    ------------------------------------
+
     Res1            <=  Tmp_Res;
-    Res2            <=  Mul_Res(n+n-1 DOWNTO n) WHEN Opr="1000" ELSE A;
+    Res2            <=  Mul_Res(n+n-1 DOWNTO n) WHEN Is_Mul='1' ELSE A;
 
     Flags           <=  FlagV & FlagC & FlagN & FlagZ;
 
-    FlagZ           <=  Mul_FlagZ WHEN Opr="1000" ELSE Tmp_FlagZ;
-    FlagN           <=  Mul_FlagN WHEN Opr="1000" ELSE Tmp_FlagN;
+    ------------------------------------ 
+
+    FlagZ           <=  Mul_FlagZ WHEN Is_Mul='1' ELSE Tmp_FlagZ;
+    FlagN           <=  Mul_FlagN WHEN Is_Mul='1' ELSE Tmp_FlagN;
 
     WITH Opr(3 DOWNTO 2) SELECT
     FlagC           <=  Set_Clr_Cout    WHEN "00",
@@ -89,7 +117,7 @@ BEGIN
                         Mul_Log_Cout    WHEN "10",
                         Shf_Rot_Cout    WHEN OTHERS;
 
-    FlagV           <=  '0';
+    FlagV           <=  Same_Sign AND (A(n-1) XOR FlagN);
 
     --===================================================================================
     --

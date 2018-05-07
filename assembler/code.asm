@@ -1,22 +1,36 @@
+.DATA
+16
+256
+1
+2
+3
+4
+5
+6
+
+// ".code x" or ".x" or ".code" are allowed.
+// .data before or after .code is allowed.
+
 .CODE
-LDD R1, 2
-STD R1, 1
-LDD R3, 3
-MOV R3, R4
-SUB R3, R4
-CALL R3
-INC R0 #inlcude
-INC R0
-INC R0
-INC R0
-RET
-INC R0
-INC R0
-INC R0
-INC R0
+
+LDD R0, 10
+MOV R0, R1
+LDD R2, 11
+STD R2, 0
+LDD R3, 12
+OUT R3
+IN R4
+SETC
+
+.100
+SETC
+LDM R1,5
+LDM R2,5
+sub R1,R2
 RTI
 
-.DATA
-// Address Data (decimal)
-2 15
-3 10
+.120
+LDM R1,5
+LDM R2,5
+sub R1,R2
+RTI
