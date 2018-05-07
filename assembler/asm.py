@@ -43,7 +43,10 @@ class Assembler(object):
         words = line.split(" ", 1)
         # Remove all spaces.
         words[0] = words[0].replace(" ", "")
-        if len(words) > 1: words[1] = words[1].replace(" ", "")
+        if len(words) > 1: 
+            words[1] = words[1].replace(" ", "")
+            if (len(words[1]) == 0):
+                words = [words[0]]
 
         ir = ''
         category = -1

@@ -1,36 +1,42 @@
-.DATA ;fwemiofjweiof    ;sdasd
-16 ; doidiowejodifwejf
-256;fwejofiwjefiowje
-1;fwejfoiwejfoiwejfoiwef
-2
-3
-4
-5
-6
-;fwoejfoiwejfiowejfoiw
-// ".code x" or ".x" or ".code" are allowed.
-// .data before or after .code is allowed.
+.DATA
+4               ;the program starts at address 4
+100             ;ISR address
 
-.CODE ;fwejfoiwejfiowejfoiwje
+.CODE
+LDM R1,7        ;R1=7
+LDM R2,6        ;R2=6
+LDM R0,10       ;R0=10
+LDM R4,5        ;R4=5
+Add R2,R1       ;R1=13  N=0  C=0  Z=0
+OR  R0,R2       ;R2=14  N=0  C=0  Z=0
+Sub R0,R4       ;R4=-5  N=1  
+Mov R1,R3       ;R3=13 
+AND R2,R1       ;R1=12
+SHL R1,2,R0     ;R0=48
+MUL R2,R1       ;R1=168  R2=0 [semester only]
 
-LDD R0, 10;woifjowiejfiowe
-MOV R0, R1;owfijoiwjfwieo
-LDD R2, 11       ;jfiowejfiowejfoiwejfiow
-STD R2, 0 ;fjwieofjwoiefjoiwejfiowej
-LDD R3, 12 ;eiwjfoiwejfoiwejfiowe
-OUT R3; fejweiofjwoeifjwioej
-IN R4
-SETC
+;set value 005D at In Port
+IN R0           ;R0=5
+SETC            ;C=1
 
-.100 ;jefoiwejfiowejiofjweiofjwio
+;set value 004D at In Port
+IN R1           ;R1=4
+
+;set value 007D at In Port
+IN R3           ;R3=7
+RLC R0          ;R0=11   C=0
+NOT R1          ;R1=-5=1111111111111011b   N=1 Z=0
+RRC R3          ;R3=3    C=1
+CLRC    
+INC R0          ;R0=12
+DEC R1          ;R1=-6 N=1 Z=0
+
+
+.100
 SETC
 LDM R1,5
-LDM R2,5
-sub R1,R2
-RTI
-
-.120
-LDM R1,5
-LDM R2,5
-sub R1,R2
+LDM R3,5
+NOP
+NOP
+Sub R3,R1       ;R1=0 Z=1
 RTI
