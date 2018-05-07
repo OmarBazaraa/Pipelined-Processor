@@ -6,15 +6,56 @@ Cell: RAM    View: arch_RAM    Library: work
 *******************************************************
 
 
- Cell                                 Library  References     Total Area
+ Cell        Library  References     Total Area
 
-ram_dq_inclock_inclock2_16_10_1024    OPERATORS     1 x      1      1 ram_dq_inclock_inclock2_16_10_1024
+and02        tsmc035_typ   356 x      1    449 gates
+and03        tsmc035_typ   206 x      2    309 gates
+and04        tsmc035_typ   350 x      2    609 gates
+ao21         tsmc035_typ    84 x      2    145 gates
+ao22         tsmc035_typ  7991 x      2  15742 gates
+ao221        tsmc035_typ    43 x      2    105 gates
+ao32         tsmc035_typ   328 x      2    649 gates
+aoi21        tsmc035_typ  1202 x      1   1490 gates
+aoi22        tsmc035_typ  5278 x      1   7811 gates
+aoi221       tsmc035_typ   379 x      2    750 gates
+aoi222       tsmc035_typ   243 x      2    545 gates
+aoi32        tsmc035_typ   935 x      2   1618 gates
+aoi321       tsmc035_typ    55 x      2    122 gates
+aoi322       tsmc035_typ   130 x      2    319 gates
+aoi33        tsmc035_typ     6 x      2     13 gates
+aoi332       tsmc035_typ     6 x      2     15 gates
+buf02        tsmc035_typ    18 x      1     18 gates
+dff          tsmc035_typ 16384 x      5  78479 gates
+inv01        tsmc035_typ   664 x      1    505 gates
+inv02        tsmc035_typ  9007 x      1   6845 gates
+inv04        tsmc035_typ   288 x      1    288 gates
+mux21_ni     tsmc035_typ  8405 x      2  15213 gates
+nand02       tsmc035_typ   690 x      1    690 gates
+nand02_2x    tsmc035_typ    16 x      1     16 gates
+nand03       tsmc035_typ   424 x      1    526 gates
+nand03_2x    tsmc035_typ     4 x      1      5 gates
+nand04       tsmc035_typ   841 x      1   1245 gates
+nor02_2x     tsmc035_typ    75 x      1     75 gates
+nor02ii      tsmc035_typ   554 x      1    688 gates
+nor03_2x     tsmc035_typ   394 x      1    490 gates
+nor04        tsmc035_typ   512 x      1    760 gates
+nor04_2x     tsmc035_typ     6 x      2     11 gates
+oai21        tsmc035_typ   241 x      1    299 gates
+oai22        tsmc035_typ   850 x      1   1258 gates
+oai221       tsmc035_typ    66 x      2    131 gates
+oai222       tsmc035_typ    43 x      2     95 gates
+oai32        tsmc035_typ   186 x      2    321 gates
+oai321       tsmc035_typ    99 x      2    219 gates
+oai33        tsmc035_typ    36 x      2     71 gates
+or02         tsmc035_typ    72 x      1     89 gates
+or03         tsmc035_typ    47 x      2     73 gates
+or04         tsmc035_typ    89 x      2    175 gates
 
  Number of ports :                      44
- Number of nets :                       44
- Number of instances :                   1
+ Number of nets :                    57864
+ Number of instances :               57603
  Number of references to this view :     0
 
 Total accumulated area : 
- Black Box ram_dq_inclock_inclock2_16_10_1024 :     1
- Number of accumulated instances :       1
+ Number of gates :                  139278
+ Number of accumulated instances :   57603

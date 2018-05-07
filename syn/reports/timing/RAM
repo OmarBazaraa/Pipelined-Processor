@@ -4,21 +4,3 @@
 
 
                         Critical Path Report
-
-Critical path #1, (unconstrained path)
-NAME                               GATE              ARRIVAL              LOAD
-------------------------------------------------------------------------------
-CLK/                                           0.00  0.00 up             0.00
-modgen_ram_ix42/inclock            GENERIC_BLACK_BOX  0.00  0.00 up             0.00
-data arrival time                                    0.00
-
-
-data required time                                not specified
-------------------------------------------------------------------------------
-data required time                                not specified
-data arrival time                                    0.00
-                                                  ----------
-                                               unconstrained path
-------------------------------------------------------------------------------
-
-
