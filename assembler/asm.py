@@ -125,7 +125,7 @@ class Assembler(object):
             line = fp.readline()
             isr_address_line = True
             while line:
-                if len(line.strip()) != 0 and line.strip()[0] != "#" and line.strip()[:2] != "//":
+                if len(line.strip()) != 0 and line.strip()[0] != ";" and line.strip()[:2] != "//":
                     line = line.strip().lower()
                     self.file_lines.append(line)
                 line = fp.readline()
