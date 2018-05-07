@@ -1,28 +1,28 @@
-.DATA
-16
-256
-1
+.DATA ;fwemiofjweiof    ;sdasd
+16 ; doidiowejodifwejf
+256;fwejofiwjefiowje
+1;fwejfoiwejfoiwejfoiwef
 2
 3
 4
 5
 6
-
+;fwoejfoiwejfiowejfoiw
 // ".code x" or ".x" or ".code" are allowed.
 // .data before or after .code is allowed.
 
-.CODE
+.CODE ;fwejfoiwejfiowejfoiwje
 
-LDD R0, 10
-MOV R0, R1
-LDD R2, 11
-STD R2, 0
-LDD R3, 12
-OUT R3
+LDD R0, 10;woifjowiejfiowe
+MOV R0, R1;owfijoiwjfwieo
+LDD R2, 11       ;jfiowejfiowejfoiwejfiow
+STD R2, 0 ;fjwieofjwoiefjoiwejfiowej
+LDD R3, 12 ;eiwjfoiwejfoiwejfiowe
+OUT R3; fejweiofjwoeifjwioej
 IN R4
 SETC
 
-.100
+.100 ;jefoiwejfiowejiofjweiofjwio
 SETC
 LDM R1,5
 LDM R2,5

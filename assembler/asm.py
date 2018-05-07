@@ -39,7 +39,6 @@ class Assembler(object):
 
     # Get the instruction information (Type, number of operands, size in RAM file, etc)
     def __get_instruction_info(self, line):
-        line = line.split(";", 1)[0]
         # Return instruction info and operands count
         words = line.split(" ", 1)
         # Remove all spaces.
@@ -127,6 +126,7 @@ class Assembler(object):
             while line:
                 if len(line.strip()) != 0 and line.strip()[0] != ";" and line.strip()[:2] != "//":
                     line = line.strip().lower()
+                    line = line.split(";", 1)[0]
                     self.file_lines.append(line)
                 line = fp.readline()
 
@@ -142,7 +142,8 @@ class Assembler(object):
             if line_words[0] == ".data":
                 data_seg = True
                 if len(line_words) > 1:
-                    self.current_data_mem_location = max(int(line_words[1]), 0)
+                    if (len(line_words[1].replace(" ", "")) >= 1):
+                        self.current_data_mem_location = max(int(line_words[1]), 0)
                 continue
             elif line_words[0] == ".code":
                 self.code_seg_start_line = current_line
@@ -164,7 +165,8 @@ class Assembler(object):
         # Get the start address of the code in the memory. found in ".code X" line
         code_line_words = self.file_lines[self.code_seg_start_line].split(" ", 1)
         if len(code_line_words) > 1:
-            self.current_code_mem_location = int(code_line_words[1])
+            if (len(code_line_words[1].replace(" ", "")) >= 1):
+                self.current_code_mem_location = int(code_line_words[1])
 
         # Scan to get variables/labels
         for i in range(self.code_seg_start_line + 1, len(self.file_lines)):
