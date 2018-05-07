@@ -104,7 +104,7 @@ class Assembler(object):
 
         else:  # Three operand instructions.
             category = Assembler.THREE_OPERAND_INST
-            size = 2
+            size = 1
             source, immediate_value, destination = words[1].split(",")
             immediate_value = int(immediate_value)
             # Ignore instructions if the immediate shift value is zero
