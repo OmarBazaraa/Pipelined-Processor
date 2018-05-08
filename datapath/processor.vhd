@@ -45,9 +45,11 @@ ARCHITECTURE arch_processor OF processor IS
     SIGNAL PC_Next              : STD_LOGIC_VECTOR(15 DOWNTO 0) := "0000000000000000";
 
     SIGNAL PC_Reset_EN          : STD_LOGIC;
+    SIGNAL PC_Reset_Din         : STD_LOGIC_VECTOR( 9 DOWNTO 0);
     SIGNAL PC_Reset_Dout        : STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
     SIGNAL PC_INTR_EN           : STD_LOGIC;
+    SIGNAL PC_INTR_Din          : STD_LOGIC_VECTOR( 9 DOWNTO 0);
     SIGNAL PC_INTR_Dout         : STD_LOGIC_VECTOR( 9 DOWNTO 0);
 
     SIGNAL Instr_Addr           : STD_LOGIC_VECTOR( 9 DOWNTO 0);
@@ -210,16 +212,21 @@ BEGIN
     PC_RESET:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 10)
-    PORT MAP(EXT_CLK, HARD_RST, PC_Reset_EN, MEM_Din(9 DOWNTO 0), PC_Reset_Dout);
+    PORT MAP(EXT_CLK, HARD_RST, PC_Reset_EN, PC_Reset_Din, PC_Reset_Dout);
 
     PC_INTR:
     ENTITY work.register_edge_rising
     GENERIC MAP(n => 10)
-    PORT MAP(EXT_CLK, HARD_RST, PC_INTR_EN, MEM_Din(9 DOWNTO 0), PC_INTR_Dout);
+    PORT MAP(EXT_CLK, HARD_RST, PC_INTR_EN, PC_INTR_Din, PC_INTR_Dout);
 
     PC_EN               <= NOT Stall;
+
     PC_Reset_EN         <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000000") ELSE '0';
+    PC_Reset_Din        <= MEM_Din(9 DOWNTO 0);
+
     PC_INTR_EN          <= '1' WHEN MEM_WR='1' AND MEM_Addr=("0000000001") ELSE '0';
+    PC_INTR_Din         <= MEM_Din(9 DOWNTO 0);
+
     Instr_Addr          <= PC_Cur(9 DOWNTO 0);
 
     --===================================================================================
