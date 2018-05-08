@@ -55,17 +55,7 @@ class Assembler(object):
 
         if len(words) == 1:  # No operand instructions.
             category = Assembler.ZERO_OPERAND_INST
-
-            if len(self.instructions[words[0]]) == 10:  # MOV, IN or OUT instructions.
-                if words[0] == 'mov':
-                    source, destination = words[1].split(",")
-                    ir += self.registers[destination] + self.registers[source]
-                elif words[0] == 'in':
-                    destination = words[1]
-                    ir += self.registers[destination] + "000"
-                else:
-                    source = words[1]
-                    ir += "000" + self.registers[source]
+            print (words, "NO OPERAND", size, ir)
 
         elif len(words[1].split(",")) < 3:
 
@@ -75,14 +65,27 @@ class Assembler(object):
                 if words[0][0] == "j":  # Branch instructions
                     src = words[1]
                     ir += "000" + self.registers[src]
+                    print (words, "BRANCH", size, ir)
+
+                elif words[0] == 'in':
+                    destination = words[1]
+                    ir += self.registers[destination] + "000"
+                    print(words, "IN", size, ir)
+
+                elif words[0] == 'out':
+                    source = words[1]
+                    ir += "000" + self.registers[source]
+                    print(words, "OUT", size, ir)
 
                 elif len(self.instructions[words[0]]) == 13:  # CALL, PUSH or POP instructions.
                     register = words[1]
                     ir += self.registers[register]
+                    print (words, "CALL PUSH POP OPERAND", size, ir)
 
                 else:  # One operand ALU instructions
                     register = words[1]
                     ir += self.registers[register] + self.registers[register]
+                    print (words, "ONE ALU OPERAND", size, ir)
 
             else:  # Two operand instructions.
                 category = Assembler.TWO_OPERAND_INST
@@ -93,16 +96,19 @@ class Assembler(object):
                     immediate_value = int(immediate_value)
                     ir += self.registers[destination] + "000"
                     ir += "," + ('0' * (NUMBER_OF_BITS - len(bin(immediate_value)[2:]))) + bin(immediate_value)[2:]
+                    print (words, "LDM TWO OPERAND", size, ir)
 
                 elif words[0] == "ldd" or words[0] == "std":
                     register, effective_address = words[1].split(",")
                     effective_address = int(effective_address)
                     ir += ('0' * (10 - len(bin(effective_address)[2:]))) + bin(effective_address)[2:] + self.registers[
                         register]
+                    print (words, "LDD STD TWO OPERAND", size, ir)
 
                 else:  # Two operand ALU instructions.
                     source, destination = words[1].split(",")
                     ir += self.registers[destination] + self.registers[source]
+                    print (words, "ALU TWO / MOV OPERAND", size, ir)
 
         else:  # Three operand instructions.
             category = Assembler.THREE_OPERAND_INST
@@ -118,6 +124,7 @@ class Assembler(object):
 
             ir += ('0' * (4 - len(bin(immediate_value)[2:]))) + bin(immediate_value)[2:] + \
                   self.registers[destination] + self.registers[source]
+            print (words, "SHL SHR THREE OPERAND", size, ir)
 
         return ir, category, size
 

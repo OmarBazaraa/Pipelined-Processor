@@ -31,6 +31,8 @@ CLRC
 INC R0          ;R0=12
 DEC R1          ;R1=-6 N=1 Z=0
 
+; out
+OUT r1
 
 .100
 SETC
